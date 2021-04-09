@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require("path");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/no_switch_nodes.json");
-var input_path = path.join(__dirname, "../examples/input-rapidpro/restart_and_loop.json");
+var input_path = path.join(__dirname, "../examples/input-rapidpro/multiple_conditions.json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
@@ -59,6 +59,7 @@ function addParents(nodes) {
     for (nd = 0; nd < nodes.length; nd++) {
         let node_uuid = nodes[nd].uuid;
         nodes[nd].unprocessed_parents = [];
+        nodes[nd].processed_parents = [];
         for (let o_nd = 0; o_nd < nodes.length; o_nd++) {
             for (let ex = 0; ex < nodes[o_nd].exits.length; ex++) {
                 if (nodes[o_nd].exits[ex].destination_uuid == node_uuid) {
@@ -133,7 +134,9 @@ function processNode(curr_node, prev_node, from_row) {
                     if (next_node) {
                         //remove current node from list of unprecessed parents of next node
                         let par_index = next_node.unprocessed_parents.indexOf(curr_node.uuid);
-
+                        //add to processed parents
+                        next_node.processed_parents.push(curr_node.uuid);
+                        
                         if (par_index > -1) {
                             next_node.unprocessed_parents.splice(par_index, 1);
                         } else {
@@ -158,10 +161,10 @@ function processNode(curr_node, prev_node, from_row) {
         } else {
             console.log("has unprocessed parents")
             if (uuid_waiting_list.includes(curr_node.uuid)) {
-                curr_node.from_rows = curr_node.from_rows + ";" + from_row;
+                curr_node.from_rows.push(from_row);
 
             } else {
-                curr_node.from_rows = from_row.toString();
+                curr_node.from_rows = [from_row];
                 uuid_waiting_list.push(curr_node.uuid);
                 node_waiting_list.push(curr_node);
             }
@@ -176,12 +179,13 @@ return curr_node
 
            
 function addFromRows(curr_node,curr_row,from_row){
+    curr_row.from = [];
     if (curr_node.hasOwnProperty("from_rows")){
-        curr_row.from = curr_node.from_rows + ";" + from_row;
-        delete curr_node["from_rows"];
-    }else{
-        curr_row.from = from_row.toString();
+        curr_row.from = curr_row.from.concat(curr_node.from_rows);
+        curr_node["from_rows"] = [];
     }
+    curr_row.from.push(from_row);
+    
 }
 
 function createSendMsgRow(curr_node, curr_action, row_counter, from_row) {
@@ -308,15 +312,15 @@ function createRouterRow(curr_node, row_counter, from_row){
         } else if (curr_node.router.type == "switch"){
             if (curr_node.router.operand == "@input.text" && curr_node.router.hasOwnProperty("wait")){
                 curr_row.type = "wait_for_response";
-            }  else if (curr_node.router.operand.startsWith("@fields") || curr_node.router.operand.startsWith("@contact")){
-                curr_row.type = "split_by_contact_field";
-            }else if (curr_node.router.operand.startsWith("@results")){
-                curr_row.type = "split_by_flow_result";
+                curr_row.save_result = curr_node.router.result_name;
+                if (curr_node.router.wait.hasOwnProperty("timeout")){
+                    curr_row.no_response = curr_node.router.wait.timeout.seconds;
+                }
             }else if (curr_node.router.operand == "@contact.groups"){
                 curr_row.type = "split_by_group";
                 curr_row.message_text = curr_node.router.cases[0].arguments[1];
             }else{
-                curr_row.type = "split_by_expression";
+                curr_row.type = "split_by_value";
             }
         } else {
             console.log("not recognised router type")
@@ -338,7 +342,7 @@ function createGoToRow(curr_node, row_counter, from_row){
     curr_row.type = "go_to";
     
     //addFromRows(curr_node,curr_row,from_row)
-    curr_row.from = from_row.toString();
+    curr_row.from = [from_row];
     curr_row.message_text = Math.min(rows_obj.filter(row => row._nodeId == curr_node.uuid).map(row => row.row_id));
     rows_obj.push(curr_row)
 
