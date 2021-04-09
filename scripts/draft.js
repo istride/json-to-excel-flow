@@ -62,8 +62,6 @@ function addParents(nodes) {
 
 function processNode(curr_node, prev_node, from_row) {
 
-
-
         if (curr_node.unprocessed_parents.length == 0) {
             // check if in waiting list and remove it
             let wl_index = uuid_waiting_list.indexOf(curr_node.uuid);
@@ -73,11 +71,13 @@ function processNode(curr_node, prev_node, from_row) {
             }
             // check if already processed
             if (uuid_processed_nodes.includes(curr_node.uuid)) {
+                // create go_to row
 
             } else {
-                // create the rows 
+                // create the corresponding type of rows (one per action if there are multiple)
                 if (curr_node.hasOwnProperty('router')) {
                     createRouterNode(curr_node, row_counter, from_row)
+                    
                     from_row = row_counter;
                     row_counter++;
 
@@ -104,6 +104,7 @@ function processNode(curr_node, prev_node, from_row) {
                         else {
                             console.log("action not implemented")
                         }
+                      
                         from_row = row_counter;
                         row_counter++;
                     });
@@ -153,12 +154,7 @@ function processNode(curr_node, prev_node, from_row) {
                 uuid_waiting_list.push(curr_node.uuid);
                 node_waiting_list.push(curr_node);
             }
-            let par_index = curr_node.unprocessed_parents.indexOf(prev_node.uuid);
-            if (par_index > -1) {
-                curr_node.unprocessed_parents.splice(par_index, 1);
-            } else {
-                console.log("error, parent not in the list")
-            }
+           
 
         }
 
@@ -166,47 +162,8 @@ function processNode(curr_node, prev_node, from_row) {
 
 }
 
-function oldprocessNode(curr_node) {
-    if (curr_node) {
 
-        if (curr_node.hasOwnProperty('router')) {
-
-        } else {
-            curr_node.actions.forEach(action => {
-                if (action.type == "send_msg") {
-                    row_counter = createSendMsgRow(curr_node, action, row_counter, from_row);
-
-                } else if (action.type == "set_contact_field") {
-                    row_counter = createSaveValueRow(curr_node, action, row_counter, from_row);
-
-
-                } else if (action.type == "add_contact_groups") {
-                    row_counter = createAddToGroupRow(curr_node, action, row_counter, from_row);
-
-                } else if (action.type == "remove_contact_groups") {
-                    row_counter = createRemoveFromGroupRow(curr_node, action, row_counter, from_row);
-
-                } else if (action.type == "set_run_result") {
-                    row_counter = createSaveFlowResultRow(curr_node, action, row_counter, from_row);
-
-
-                }
-                else {
-                    console.log("action not implemented")
-                }
-                from_row = row_counter - 1;
-            });
-            processed_nodes.push(curr_node.uuid)
-
-
-            var next_node_id = curr_node.exits[0].destination_uuid;
-            curr_node = flow.nodes.filter(nd => nd.uuid == next_node_id)[0];
-            processNode(curr_node)
-
-        }
-    }
-    return
-}
+           
 
 
 
@@ -276,7 +233,7 @@ function createAddToGroupRow(curr_node, curr_action, row_counter, from_row) {
 function createRemoveFromGroupRow(curr_node, curr_action, row_counter, from_row) {
     let curr_row = {};
     curr_row.row_id = row_counter;
-    curr_row.type = "remove_fron_group";
+    curr_row.type = "remove_from_group";
 
 
     curr_row.message_text = curr_action.groups[0].name;
@@ -313,16 +270,44 @@ function createSaveFlowResultRow(curr_node, curr_action, row_counter, from_row) 
 
 
 function createRouterNode(curr_node, row_counter, from_row){
+
     let curr_row = {};
     curr_row.row_id = row_counter;
-    curr_row.type = "router";
-
-
-    curr_row.message_text = "xxx";
     curr_row._nodeId = curr_node.uuid;
-
     curr_row.from = from_row;
 
+    if (curr_node.actions.length >0) {
+        // check if it's enter flow node
+        if ( curr_node.actions[0].type == "enter_flow"){
+            curr_row.type = "start_new_flow";
+            curr_row.message_text = curr_node.actions[0].flow.name;
+        }else{
+            console.log("router node with action but not enter flow")
+        }       
+    } else {
+        // other split nodes
+        if (curr_node.router.type == "random"){
+            curr_row.type = "split_random";
+        } else if (curr_node.router.type == "switch"){
+            if (curr_node.router.operand == "@input.text" && curr_node.router.hasOwnProperty("wait")){
+                curr_row.type = "wait_for_response";
+            }  else if (curr_node.router.operand.startsWith("@fields") || curr_node.router.operand.startsWith("@contact")){
+                curr_row.type = "split_by_contact_field";
+            }else if (curr_node.router.operand.startsWith("@results")){
+                curr_row.type = "split_by_flow_result";
+            }else if (curr_node.router.operand == "@contact.groups"){
+                curr_row.type = "split_by_group";
+                curr_row.message_text = curr_node.router.cases[0].arguments[1];
+            }else{
+                curr_row.type = "split_by_expression";
+            }
+        } else {
+            console.log("not recognised router type")
+        }
+
+
+    }
+   
     rows_obj.push(curr_row)
 
 
@@ -332,3 +317,11 @@ function createRouterNode(curr_node, row_counter, from_row){
 
 
 
+function addFromRows(curr_node,curr_row,from_row){
+    if (curr_node.hasOwnProperty("from_rows")){
+        curr_row.from = curr_node.from_rows.push(from_row);
+        curr_node.from_rows = [];
+    }else{
+        curr_row.from = from_row;
+    }
+}
