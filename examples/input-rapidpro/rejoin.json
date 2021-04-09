@@ -1,0 +1,216 @@
+{
+  "version": "13",
+  "site": "https://rapidpro.idems.international",
+  "flows": [
+    {
+      "_ui": {
+        "nodes": {
+          "34b60a30-2886-43da-8f37-ce0a91cf1849": {
+            "config": null,
+            "position": {
+              "left": 320,
+              "top": 40
+            },
+            "type": "split_by_random"
+          },
+          "5a016c98-d1f0-4019-96c3-b96cdd72ef75": {
+            "position": {
+              "left": 120,
+              "top": 180
+            },
+            "type": "execute_actions"
+          },
+          "efbb065e-a971-40eb-b83b-b2ebc468f09e": {
+            "position": {
+              "left": 360,
+              "top": 200
+            },
+            "type": "execute_actions"
+          },
+          "85e2af5e-12fe-4982-8cae-9bdbcc1c61b2": {
+            "position": {
+              "left": 100,
+              "top": 360
+            },
+            "type": "execute_actions"
+          },
+          "18f2681e-97af-4ebd-ab9a-17c059ba677e": {
+            "position": {
+              "left": 260,
+              "top": 500
+            },
+            "type": "execute_actions"
+          },
+          "773063f3-e9c3-4d7d-8d66-bef3abcefb03": {
+            "position": {
+              "left": 560,
+              "top": 300
+            },
+            "type": "execute_actions"
+          }
+        }
+      },
+      "expire_after_minutes": 10080,
+      "language": "base",
+      "localization": {},
+      "metadata": {
+        "revision": 4
+      },
+      "name": "test rejoin",
+      "nodes": [
+        {
+          "actions": [],
+          "exits": [
+            {
+              "destination_uuid": "5a016c98-d1f0-4019-96c3-b96cdd72ef75",
+              "uuid": "ef0ce8c5-376d-44d2-b191-2eeec0cb051c"
+            },
+            {
+              "destination_uuid": "efbb065e-a971-40eb-b83b-b2ebc468f09e",
+              "uuid": "fd051cf5-d24f-44bf-bea4-2ae7bb85a038"
+            },
+            {
+              "destination_uuid": "773063f3-e9c3-4d7d-8d66-bef3abcefb03",
+              "uuid": "5252268e-4407-40c4-99a7-df8b8cd79df9"
+            }
+          ],
+          "router": {
+            "categories": [
+              {
+                "exit_uuid": "ef0ce8c5-376d-44d2-b191-2eeec0cb051c",
+                "name": "Bucket 1",
+                "uuid": "94d46453-0fe5-4a44-b29b-82871b9a48f3"
+              },
+              {
+                "exit_uuid": "fd051cf5-d24f-44bf-bea4-2ae7bb85a038",
+                "name": "Bucket 2",
+                "uuid": "13f9044d-ee6f-4be7-8936-1933b5190592"
+              },
+              {
+                "exit_uuid": "5252268e-4407-40c4-99a7-df8b8cd79df9",
+                "name": "Bucket 3",
+                "uuid": "72fa75ef-0b8f-434a-923f-87804061266e"
+              }
+            ],
+            "type": "random"
+          },
+          "uuid": "34b60a30-2886-43da-8f37-ce0a91cf1849"
+        },
+        {
+          "actions": [
+            {
+              "attachments": [],
+              "text": "1.1",
+              "type": "send_msg",
+              "quick_replies": [],
+              "uuid": "eb996e51-4e54-4866-854f-fc3725f8b696"
+            },
+            {
+              "attachments": [],
+              "text": "1.2",
+              "type": "send_msg",
+              "quick_replies": [],
+              "uuid": "9939b8b8-84a7-4ae8-be16-3d7f32c17ae8"
+            }
+          ],
+          "exits": [
+            {
+              "destination_uuid": "85e2af5e-12fe-4982-8cae-9bdbcc1c61b2",
+              "uuid": "6b351e03-eead-4ea6-a892-788c7632f348"
+            }
+          ],
+          "uuid": "5a016c98-d1f0-4019-96c3-b96cdd72ef75"
+        },
+        {
+          "actions": [
+            {
+              "attachments": [],
+              "text": "3",
+              "type": "send_msg",
+              "quick_replies": [],
+              "uuid": "408f0494-c62e-4047-852b-df25d0b4332b"
+            }
+          ],
+          "exits": [
+            {
+              "destination_uuid": "18f2681e-97af-4ebd-ab9a-17c059ba677e",
+              "uuid": "e14974ad-597c-4aac-a0b2-44741529a269"
+            }
+          ],
+          "uuid": "efbb065e-a971-40eb-b83b-b2ebc468f09e"
+        },
+        {
+          "uuid": "773063f3-e9c3-4d7d-8d66-bef3abcefb03",
+          "actions": [
+            {
+              "attachments": [],
+              "text": "4",
+              "type": "send_msg",
+              "quick_replies": [],
+              "uuid": "d82b83e1-7d77-4c2a-9730-6574eef2677f"
+            }
+          ],
+          "exits": [
+            {
+              "uuid": "97010758-b3ce-4bd2-b5f3-029d55aa88e5",
+              "destination_uuid": "18f2681e-97af-4ebd-ab9a-17c059ba677e"
+            }
+          ]
+        },
+        {
+          "actions": [
+            {
+              "all_urns": false,
+              "attachments": [],
+              "quick_replies": [],
+              "text": "2",
+              "type": "send_msg",
+              "uuid": "6c6dd128-63da-495b-a8a9-70ab963939a1"
+            }
+          ],
+          "exits": [
+            {
+              "destination_uuid": "18f2681e-97af-4ebd-ab9a-17c059ba677e",
+              "uuid": "d99a74a8-637d-4994-8877-09f89e64630a"
+            }
+          ],
+          "uuid": "85e2af5e-12fe-4982-8cae-9bdbcc1c61b2"
+        },
+        {
+          "actions": [
+            {
+              "attachments": [],
+              "text": "5.1",
+              "type": "send_msg",
+              "all_urns": false,
+              "quick_replies": [],
+              "uuid": "dae97320-76ec-477c-9817-dbe4271c453b"
+            },
+            {
+              "attachments": [],
+              "text": "5.2",
+              "type": "send_msg",
+              "quick_replies": [],
+              "uuid": "903e9439-6774-4887-b8e4-273fc75e20d6"
+            }
+          ],
+          "exits": [
+            {
+              "destination_uuid": null,
+              "uuid": "158e01a3-05e7-43d9-812f-9b9b5a41c875"
+            }
+          ],
+          "uuid": "18f2681e-97af-4ebd-ab9a-17c059ba677e"
+        }
+      ],
+      "spec_version": "13.1.0",
+      "type": "messaging",
+      "uuid": "a8421cc8-e419-4399-8a75-429fe9c35616",
+      "revision": 18
+    }
+  ],
+  "campaigns": [],
+  "triggers": [],
+  "fields": [],
+  "groups": []
+}
