@@ -147,10 +147,10 @@ function processNode(curr_node, prev_node, from_row) {
         } else {
             console.log("has unprocessed parents")
             if (uuid_waiting_list.includes(curr_node.uuid)) {
-                curr_node.from_rows.push(from_row);
+                curr_node.from_rows = curr_node.from_rows + ";" + from_row;
 
             } else {
-                curr_node.from_rows = [from_row];
+                curr_node.from_rows = from_row.toString();
                 uuid_waiting_list.push(curr_node.uuid);
                 node_waiting_list.push(curr_node);
             }
@@ -164,7 +164,6 @@ function processNode(curr_node, prev_node, from_row) {
 
 
            
-
 
 
 function createSendMsgRow(curr_node, curr_action, row_counter, from_row) {
@@ -184,8 +183,8 @@ function createSendMsgRow(curr_node, curr_action, row_counter, from_row) {
     })
     curr_row._nodeId = curr_node.uuid;
 
-    curr_row.from = from_row;
-
+    addFromRows(curr_node,curr_row,from_row)
+   
     rows_obj.push(curr_row)
 
 
@@ -203,8 +202,8 @@ function createSaveValueRow(curr_node, curr_action, row_counter, from_row) {
     curr_row.save_name = curr_action.value;
 
     curr_row._nodeId = curr_node.uuid;
-
-    curr_row.from = from_row;
+    addFromRows(curr_node,curr_row,from_row)
+    
 
     rows_obj.push(curr_row)
 
@@ -222,7 +221,7 @@ function createAddToGroupRow(curr_node, curr_action, row_counter, from_row) {
 
     curr_row._nodeId = curr_node.uuid;
 
-    curr_row.from = from_row;
+    addFromRows(curr_node,curr_row,from_row)
 
     rows_obj.push(curr_row)
 
@@ -240,7 +239,7 @@ function createRemoveFromGroupRow(curr_node, curr_action, row_counter, from_row)
 
     curr_row._nodeId = curr_node.uuid;
 
-    curr_row.from = from_row;
+    addFromRows(curr_node,curr_row,from_row)
 
     rows_obj.push(curr_row)
 
@@ -260,7 +259,7 @@ function createSaveFlowResultRow(curr_node, curr_action, row_counter, from_row) 
 
     curr_row._nodeId = curr_node.uuid;
 
-    curr_row.from = from_row;
+    addFromRows(curr_node,curr_row,from_row)
 
     rows_obj.push(curr_row)
 
@@ -274,7 +273,7 @@ function createRouterNode(curr_node, row_counter, from_row){
     let curr_row = {};
     curr_row.row_id = row_counter;
     curr_row._nodeId = curr_node.uuid;
-    curr_row.from = from_row;
+    addFromRows(curr_node,curr_row,from_row)
 
     if (curr_node.actions.length >0) {
         // check if it's enter flow node
@@ -319,9 +318,9 @@ function createRouterNode(curr_node, row_counter, from_row){
 
 function addFromRows(curr_node,curr_row,from_row){
     if (curr_node.hasOwnProperty("from_rows")){
-        curr_row.from = curr_node.from_rows.push(from_row);
-        curr_node.from_rows = [];
+        curr_row.from = curr_node.from_rows + ";" + from_row;
+        delete curr_node["from_rows"];
     }else{
-        curr_row.from = from_row;
+        curr_row.from = from_row.toString();
     }
 }
