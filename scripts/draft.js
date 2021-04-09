@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require("path");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/no_switch_nodes.json");
-var input_path = path.join(__dirname, "../examples/input-rapidpro/rejoin.json");
+var input_path = path.join(__dirname, "../examples/input-rapidpro/restart_and_loop.json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
@@ -25,11 +25,21 @@ for (fl = 0; fl < obj_flows.flows.length; fl++) {
     var curr_node = nodes[0];
     var from_row = "start";
     var row_counter = 1;
+    
 
-    processNode(curr_node, {}, from_row)
+    while(uuid_waiting_list.length>0 || nodes.length >uuid_processed_nodes.length){
+        var last_node = processNode(curr_node, {}, from_row)
+        if (uuid_waiting_list.length>0 ){
+            curr_node = node_waiting_list[0];
+            curr_node.unprocessed_parents = [];
+            processNode(curr_node, last_node, from_row)
+        }
+        
+    }
+    console.log("tot nodes: "+ nodes.length + " processed: " + uuid_processed_nodes.length)
+    
 
     flows_sheets[flow.name] = JSON.parse(JSON.stringify(rows_obj));
-
 
 }
 
@@ -72,11 +82,12 @@ function processNode(curr_node, prev_node, from_row) {
             // check if already processed
             if (uuid_processed_nodes.includes(curr_node.uuid)) {
                 // create go_to row
+                createGoToRow(curr_node, row_counter, from_row)
 
             } else {
                 // create the corresponding type of rows (one per action if there are multiple)
                 if (curr_node.hasOwnProperty('router')) {
-                    createRouterNode(curr_node, row_counter, from_row)
+                    createRouterRow(curr_node, row_counter, from_row)
                     
                     from_row = row_counter;
                     row_counter++;
@@ -158,13 +169,20 @@ function processNode(curr_node, prev_node, from_row) {
 
         }
 
-
+return curr_node
 
 }
 
 
            
-
+function addFromRows(curr_node,curr_row,from_row){
+    if (curr_node.hasOwnProperty("from_rows")){
+        curr_row.from = curr_node.from_rows + ";" + from_row;
+        delete curr_node["from_rows"];
+    }else{
+        curr_row.from = from_row.toString();
+    }
+}
 
 function createSendMsgRow(curr_node, curr_action, row_counter, from_row) {
     let curr_row = {};
@@ -268,7 +286,7 @@ function createSaveFlowResultRow(curr_node, curr_action, row_counter, from_row) 
 }
 
 
-function createRouterNode(curr_node, row_counter, from_row){
+function createRouterRow(curr_node, row_counter, from_row){
 
     let curr_row = {};
     curr_row.row_id = row_counter;
@@ -314,13 +332,15 @@ function createRouterNode(curr_node, row_counter, from_row){
 
 }
 
+function createGoToRow(curr_node, row_counter, from_row){
+    let curr_row = {};
+    curr_row.row_id = row_counter;
+    curr_row.type = "go_to";
+    
+    //addFromRows(curr_node,curr_row,from_row)
+    curr_row.from = from_row.toString();
+    curr_row.message_text = Math.min(rows_obj.filter(row => row._nodeId == curr_node.uuid).map(row => row.row_id));
+    rows_obj.push(curr_row)
 
-
-function addFromRows(curr_node,curr_row,from_row){
-    if (curr_node.hasOwnProperty("from_rows")){
-        curr_row.from = curr_node.from_rows + ";" + from_row;
-        delete curr_node["from_rows"];
-    }else{
-        curr_row.from = from_row.toString();
-    }
 }
+
