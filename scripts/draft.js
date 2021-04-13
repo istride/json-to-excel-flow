@@ -1,7 +1,8 @@
 var fs = require('fs');
 var path = require("path");
-//var input_path = path.join(__dirname, "../examples/input-rapidpro/no_switch_nodes.json");
-var input_path = path.join(__dirname, "../examples/input-rapidpro/multiple_conditions.json");
+//var input_path = path.join(__dirname, "../examples/input-rapidpro/switch_nodes.json");
+//var input_path = path.join(__dirname, "../examples/input-rapidpro/rejoin.json");
+var input_path = path.join(__dirname, "../examples/input-rapidpro/all_test_flows.json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
@@ -23,16 +24,16 @@ for (fl = 0; fl < obj_flows.flows.length; fl++) {
     var uuid_waiting_list = [];
 
     var curr_node = nodes[0];
-    var from_row = "start";
+    var from_row_id = "start";
     var row_counter = 1;
     
 
     while(uuid_waiting_list.length>0 || nodes.length >uuid_processed_nodes.length){
-        var last_node = processNode(curr_node, {}, from_row)
+        processNode(curr_node, from_row_id)
         if (uuid_waiting_list.length>0 ){
             curr_node = node_waiting_list[0];
             curr_node.unprocessed_parents = [];
-            processNode(curr_node, last_node, from_row)
+            processNode(curr_node, null)
         }
         
     }
@@ -45,7 +46,7 @@ for (fl = 0; fl < obj_flows.flows.length; fl++) {
 
 
 var flows_sheets = JSON.stringify(flows_sheets, null, 2);
-var output_path = path.join(__dirname, "../examples/output/row_no_switch_nodes.json");
+var output_path = path.join(__dirname, "../examples/output/all_test_flows_rows.json");
 fs.writeFile(output_path, flows_sheets, function (err, result) {
     if (err) console.log('error', err);
 });
@@ -71,7 +72,7 @@ function addParents(nodes) {
 }
 
 
-function processNode(curr_node, prev_node, from_row) {
+function processNode(curr_node, from_row_id) {
 
         if (curr_node.unprocessed_parents.length == 0) {
             // check if in waiting list and remove it
@@ -83,33 +84,36 @@ function processNode(curr_node, prev_node, from_row) {
             // check if already processed
             if (uuid_processed_nodes.includes(curr_node.uuid)) {
                 // create go_to row
-                createGoToRow(curr_node, row_counter, from_row)
+                var go_to_row = createGoToRow(curr_node, row_counter, from_row_id)
+                addConditions(curr_node, go_to_row)
+                row_counter++;
 
             } else {
                 // create the corresponding type of rows (one per action if there are multiple)
+                
                 if (curr_node.hasOwnProperty('router')) {
-                    createRouterRow(curr_node, row_counter, from_row)
+                    createRouterRow(curr_node, row_counter, from_row_id)
                     
-                    from_row = row_counter;
+                    from_row_id = row_counter;
                     row_counter++;
 
                 } else {
                     curr_node.actions.forEach(action => {
                         if (action.type == "send_msg") {
-                            createSendMsgRow(curr_node, action, row_counter, from_row);
+                            createSendMsgRow(curr_node, action, row_counter, from_row_id);
 
                         } else if (action.type == "set_contact_field") {
-                            createSaveValueRow(curr_node, action, row_counter, from_row);
+                            createSaveValueRow(curr_node, action, row_counter, from_row_id);
 
 
                         } else if (action.type == "add_contact_groups") {
-                            createAddToGroupRow(curr_node, action, row_counter, from_row);
+                            createAddToGroupRow(curr_node, action, row_counter, from_row_id);
 
                         } else if (action.type == "remove_contact_groups") {
-                            createRemoveFromGroupRow(curr_node, action, row_counter, from_row);
+                            createRemoveFromGroupRow(curr_node, action, row_counter, from_row_id);
 
                         } else if (action.type == "set_run_result") {
-                            createSaveFlowResultRow(curr_node, action, row_counter, from_row);
+                            createSaveFlowResultRow(curr_node, action, row_counter, from_row_id);
 
 
                         }
@@ -117,13 +121,19 @@ function processNode(curr_node, prev_node, from_row) {
                             console.log("action not implemented")
                         }
                       
-                        from_row = row_counter;
+                        from_row_id = row_counter;
                         row_counter++;
                     });
 
 
 
                 }
+
+                // add conditions to the first row corresponding to the node
+                var node_rows = rows_obj.filter(r =>(r._nodeId == curr_node.uuid));
+                var first_row = node_rows.sort((r1,r2)=> r1.row_id - r2.row_id)[0];
+                addConditions(curr_node, first_row)
+                  
 
                 uuid_processed_nodes.push(curr_node.uuid)
                 for (let ex = 0; ex < curr_node.exits.length; ex++) {
@@ -144,7 +154,7 @@ function processNode(curr_node, prev_node, from_row) {
                         }
 
                         // call function recursively on next node
-                        processNode(next_node, curr_node, from_row)
+                        processNode(next_node, from_row_id)
 
                     }
 
@@ -161,10 +171,10 @@ function processNode(curr_node, prev_node, from_row) {
         } else {
             console.log("has unprocessed parents")
             if (uuid_waiting_list.includes(curr_node.uuid)) {
-                curr_node.from_rows.push(from_row);
+                curr_node.from_rows.push(from_row_id);
 
             } else {
-                curr_node.from_rows = [from_row];
+                curr_node.from_rows = [from_row_id];
                 uuid_waiting_list.push(curr_node.uuid);
                 node_waiting_list.push(curr_node);
             }
@@ -178,13 +188,13 @@ return curr_node
 
 
            
-function addFromRows(curr_node,curr_row,from_row){
+function addFromRows(curr_node,curr_row,from_row_id){
     curr_row.from = [];
     if (curr_node.hasOwnProperty("from_rows")){
         curr_row.from = curr_row.from.concat(curr_node.from_rows);
         curr_node["from_rows"] = [];
     }
-    curr_row.from.push(from_row);
+    curr_row.from.push(from_row_id);
     
 }
 
@@ -220,8 +230,8 @@ function createSaveValueRow(curr_node, curr_action, row_counter, from_row) {
     curr_row.type = "save_value";
 
 
-    curr_row.message_text = curr_action.field.name;
-    curr_row.save_name = curr_action.value;
+    curr_row.message_text = curr_action.value;
+    curr_row.save_name = curr_action.field.name;
 
     curr_row._nodeId = curr_node.uuid;
     addFromRows(curr_node,curr_row,from_row)
@@ -341,10 +351,124 @@ function createGoToRow(curr_node, row_counter, from_row){
     curr_row.row_id = row_counter;
     curr_row.type = "go_to";
     
-    //addFromRows(curr_node,curr_row,from_row)
     curr_row.from = [from_row];
     curr_row.message_text = Math.min(rows_obj.filter(row => row._nodeId == curr_node.uuid).map(row => row.row_id));
     rows_obj.push(curr_row)
 
+    return curr_row
 }
 
+
+
+function addConditions(curr_node, curr_row){
+    curr_row.condition = [];
+    curr_row.condition_var = [];
+    curr_row.condition_type = [];
+
+    // remove start from row.from
+    var from_list = JSON.parse(JSON.stringify(curr_row.from));
+    console.log(curr_row)
+    let start_index = curr_row.from.indexOf("start");
+    if (start_index > -1) {
+        from_list.splice(start_index, 1);
+    }
+    let from_set = [...new Set(from_list)].sort().filter(el => el);
+    console.log(from_set)
+    
+    from_set.forEach(from_row_id =>{
+        let from_row = rows_obj.filter(rw => (rw.row_id == from_row_id))[0];
+        console.log(from_row)
+        let from_node = nodes.filter(nd =>(nd.uuid== from_row._nodeId))[0];
+        
+        let from_exits = from_node.exits.filter(ex => (ex.destination_uuid == curr_node.uuid));
+        if (from_exits.length == 0){
+            console.log("error, curr_node is not a child of the from node")
+        }else{
+            from_exits.forEach(exit =>{
+                if (!from_node.hasOwnProperty('router')){
+                    curr_row.condition.push(null);
+                    curr_row.condition_var.push(null);
+                    curr_row.condition_type.push(null);
+                }else{
+                    console.log(from_node.router)
+                    let from_cat = from_node.router.categories.filter(cat => (cat.exit_uuid == exit.uuid))[0];
+                    if (from_node.actions.length >0) {
+                        // check if it's enter flow node
+                        if ( from_node.actions[0].type == "enter_flow"){
+                            curr_row.condition.push(from_cat.name);
+                            curr_row.condition_var.push(null);
+                            curr_row.condition_type.push(null);
+                          
+                        }else{
+                            console.log("router node with action but not enter flow")
+                        }       
+                    }else {
+                        // other split nodes
+                        if (from_node.router.type == "random"){
+                            curr_row.condition.push(from_cat.name.replace("Bucket ",""));
+                            curr_row.condition_var.push(null);
+                            curr_row.condition_type.push(null);
+    
+                        } else if (from_node.router.type == "switch"){
+                            if (from_node.router.operand == "@input.text" && from_node.router.hasOwnProperty("wait")){
+                                if (from_cat.uuid == from_node.router.default_category_uuid){
+                                    curr_row.condition.push(null);
+                                    curr_row.condition_var.push(null);
+                                    curr_row.condition_type.push(null);
+                                }else if (from_cat.name == "No Response"){
+                                    curr_row.condition.push("No Response");
+                                    curr_row.condition_var.push(null);
+                                    curr_row.condition_type.push(null);
+        
+                                }else {
+                                    let from_case = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
+                                    curr_row.condition.push(from_case.arguments);
+                                    curr_row.condition_var.push(from_node.router.operand);
+                                    curr_row.condition_type.push(from_case.type);
+        
+                                }
+                            }else if (curr_node.router.operand == "@contact.groups"){
+                                if (from_cat.uuid == curr_node.router.default_category_uuid){
+                                    curr_row.condition.push(null);
+                                    curr_row.condition_var.push(null);
+                                    curr_row.condition_type.push(null);
+        
+                                }else{
+                                    curr_row.condition.push(from_cat.name);
+                                    curr_row.condition_var.push(null);
+                                    curr_row.condition_type.push(null);
+        
+                                }
+                            }else{
+                                if (from_cat.uuid == from_node.router.default_category_uuid){
+                                    curr_row.condition.push(null);
+                                    curr_row.condition_var.push(null);
+                                    curr_row.condition_type.push(null);
+        
+                                }else{
+                                    let from_case = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
+                                    curr_row.condition.push(from_case.arguments);
+                                    curr_row.condition_var.push(from_node.router.operand);
+                                    curr_row.condition_type.push(from_case.type);
+        
+                                }
+                            }
+
+                        } else{
+                            console.log("type of router not recognised")
+                        }
+
+                    }
+
+                }
+
+
+            })
+        }
+
+    })
+
+
+    console.log(curr_row)
+
+}
