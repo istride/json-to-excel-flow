@@ -3,15 +3,15 @@ var fs = require('fs');
 var path = require("path");
 var converter = require("json-2-csv");
 
-var input_path  = path.join(__dirname, "../examples/output/all_test_flows_rows.json");
+var input_path  = path.join(__dirname, "../examples/output/all_test_rows.json");
 var full_json_string = fs.readFileSync(input_path).toString();
 var row_obj = JSON.parse(full_json_string);
 
 
 
-const column_names = [ "row_id","type","from","condition","condition_var","condition_type","message_text","choice_1",
+const column_names = [ "row_id","type","from","condition","condition_var","condition_type","save_name","message_text","choice_1",
 "choice_2","choice_3","choice_4","choice_5","choice_6","choice_7","choice_8","choice_9","choice_10","image","audio","video",
-"_nodeId","save_name","no_response"];
+"_nodeId","no_response"];
 
 async function outputFiles() {
 
@@ -27,10 +27,23 @@ async function outputFiles() {
                
                 var csv_row = {};
                 column_names.forEach(col =>{
-                    if (curr_json_row.hasOwnProperty(col)){
-                        csv_row[col] = curr_json_row[col];
+                    if (curr_json_row.hasOwnProperty(col) ){
+                        if (Array.isArray(curr_json_row[col]) ){
+                            if (curr_json_row[col].every(function(v) { return v == null })){
+                                csv_row[col] = ""
+                            } else if(curr_json_row[col].length == 1){
+                                csv_row[col] = curr_json_row[col][0];
+                            } else{
+                                csv_row[col] = curr_json_row[col];
+                            }
+
+                            
+                        }else{
+                            csv_row[col] = curr_json_row[col];
+                        }
+                        
                     }else{
-                        csv_row[col] = null;
+                        csv_row[col] = "";
                     }
                 })
                 curr_flow_csv.push(csv_row);
