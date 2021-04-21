@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require("path");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/all_test_flows.json");
-var input_path = path.join(__dirname, "../examples/input-rapidpro/plh-international-flavour-test-flows.json");
+var input_path = path.join(__dirname, "../examples/input-rapidpro/flows_from_excel.json");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/plh-international-flavour.json");
 
 var json_string = fs.readFileSync(input_path).toString();
@@ -56,7 +56,7 @@ for (fl = 0; fl < obj_flows.flows.length; fl++) {
 
 
 var flows_sheets = JSON.stringify(flows_sheets, null, 2);
-var output_path = path.join(__dirname, "../examples/output/all_test_rows.json");
+var output_path = path.join(__dirname, "../examples/output/flows_from_excel_rows.json");
 fs.writeFile(output_path, flows_sheets, function (err, result) {
     if (err) console.log('error', err);
 });
@@ -384,7 +384,7 @@ function createRouterRow(curr_node, row_counter, from_row){
         } else if (curr_node.router.type == "switch"){
             if (curr_node.router.operand == "@input.text" && curr_node.router.hasOwnProperty("wait")){
                 curr_row.type = "wait_for_response";
-                curr_row.save_result = curr_node.router.result_name;
+                curr_row.save_name = curr_node.router.result_name;
                 if (curr_node.router.wait.hasOwnProperty("timeout")){
                     curr_row.no_response = curr_node.router.wait.timeout.seconds;
                 }
