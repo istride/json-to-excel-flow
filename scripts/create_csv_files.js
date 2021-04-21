@@ -3,7 +3,7 @@ var fs = require('fs');
 var path = require("path");
 var converter = require("json-2-csv");
 
-var input_path  = path.join(__dirname, "../examples/output/all_test_rows.json");
+var input_path  = path.join(__dirname, "../examples/output/flows_from_excel_rows.json");
 var full_json_string = fs.readFileSync(input_path).toString();
 var row_obj = JSON.parse(full_json_string);
 
@@ -16,9 +16,9 @@ const column_names = [ "row_id","type","from","condition","condition_var","condi
 async function outputFiles() {
 
 
-        
+        var flow_names = [];
         for (flow in row_obj) {
-            console.log(flow)
+            
             var curr_flow_rows = row_obj[flow];
             
             var curr_flow_csv = [];
@@ -28,7 +28,9 @@ async function outputFiles() {
                 var csv_row = {};
                 column_names.forEach(col =>{
                     if (curr_json_row.hasOwnProperty(col) ){
+                        
                         if (Array.isArray(curr_json_row[col]) ){
+                          
                             if (curr_json_row[col].every(function(v) { return v == null })){
                                 csv_row[col] = ""
                             } else if(curr_json_row[col].length == 1){
@@ -48,29 +50,46 @@ async function outputFiles() {
                 })
                 curr_flow_csv.push(csv_row);
             }
-                  
-            var output_path = path.join(__dirname, "../examples/output/csv-files/"+ flow + ".csv");
+
+        
+            const searchRegExp_1 = /\s-\s/g;
+            const replaceWith_1 = '-';
+            const searchRegExp_2 = /\s/g;
+            const replaceWith_2 = '_';
+            let flow_sheet_name = String(flow).replace(searchRegExp_1, replaceWith_1).replace(searchRegExp_2, replaceWith_2);
+            if (flow_sheet_name.length >31){
+                flow_sheet_name = flow_sheet_name.substring(0,31);
+            }
+       
+
+            flow_names.push(flow_sheet_name);
+            var output_path = path.join(__dirname, "../examples/output/csv-files/flows_from_excel/"+ flow_sheet_name + ".csv");
 
 
 
       
-        /* converter.json2csv(rows, (err, csvString) => {
-            fs.writeFileSync(output_path, csvString);
-            //console.log("CSV " + flows_for_spreadsheet[N_file].name_of_file + " is written");
-            console.log(output_path + " is written")
-        }); */
+       
         
         let csvString = await converter.json2csvAsync(curr_flow_csv);
         fs.writeFileSync(output_path, csvString);
-        /*wrapperJson2Csv(output_path, rows).then((csv) => {
-            console.log(output_path)
-            fs.writeFile(output_path, csv, function (err, result) {
-                if (err) console.log('error', err);
-            }
-            )
-        }).catch((err) => { console.error(err) });*/
+        
 
     }
+    var content_csv = [];
+    flow_names.forEach(name =>{
+        let content_row = {};
+        content_row.flow_type = "conversation";
+        content_row.flow_name = name;
+        content_row.status = "released";
+        content_csv.push(content_row);
+    })
+
+
+
+    var output_path = path.join(__dirname, "../examples/output/csv-files/flows_from_excel/"+ "==content_list==.csv");
+    let csvString = await converter.json2csvAsync(content_csv);
+    fs.writeFileSync(output_path, csvString);
+
 }
 
 outputFiles().then(() => {
