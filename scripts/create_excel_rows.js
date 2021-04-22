@@ -1,19 +1,33 @@
 var fs = require('fs');
 var path = require("path");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/all_test_flows.json");
-var input_path = path.join(__dirname, "../examples/input-rapidpro/flows_from_excel.json");
-//var input_path = path.join(__dirname, "../examples/input-rapidpro/plh-international-flavour.json");
+//var input_path = path.join(__dirname, "../examples/input-rapidpro/flows_from_excel.json");
+var input_path = path.join(__dirname, "../parentText/plh-international-flavour.json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
 
 
 var flows_sheets = {}
+const flow_cat_name = "PLH - Welcome";
+const file_name = "others"
+
+const other_cat_names = ["PLH - Help", "PLH - Activity","PLH - Content","PLH - Supportive","PLH - Survey","PLH - Welcome"]
 
 
 for (fl = 0; fl < obj_flows.flows.length; fl++) {
+
     
     flow = obj_flows.flows[fl];
+    var is_other_flow = true;
+    other_cat_names.forEach(cat => {
+        if (flow.name.startsWith(cat)){
+            is_other_flow = false;
+        }
+    })
+    if (!is_other_flow){
+        continue
+    }
     console.log(flow.name)
 
     nodes = flow.nodes;
@@ -56,7 +70,7 @@ for (fl = 0; fl < obj_flows.flows.length; fl++) {
 
 
 var flows_sheets = JSON.stringify(flows_sheets, null, 2);
-var output_path = path.join(__dirname, "../examples/output/flows_from_excel_rows.json");
+var output_path = path.join(__dirname, "../parentText/json/" + file_name +  ".json");
 fs.writeFile(output_path, flows_sheets, function (err, result) {
     if (err) console.log('error', err);
 });
@@ -293,6 +307,7 @@ function createAddToGroupRow(curr_node, curr_action, row_counter, from_row) {
 
 
     curr_row.message_text = curr_action.groups[0].name;
+    curr_row.obj_id = curr_action.groups[0].uuid;
 
     curr_row._nodeId = curr_node.uuid;
 
@@ -311,6 +326,7 @@ function createRemoveFromGroupRow(curr_node, curr_action, row_counter, from_row)
 
 
     curr_row.message_text = curr_action.groups[0].name;
+    curr_row.obj_id = curr_action.groups[0].uuid;
 
     curr_row._nodeId = curr_node.uuid;
 
@@ -374,6 +390,7 @@ function createRouterRow(curr_node, row_counter, from_row){
         if ( curr_node.actions[0].type == "enter_flow"){
             curr_row.type = "start_new_flow";
             curr_row.message_text = curr_node.actions[0].flow.name;
+            curr_row.obj_id = curr_node.actions[0].flow.uuid;
         }else{
             console.log("router node with action but not enter flow")
         }       

@@ -3,7 +3,9 @@ var fs = require('fs');
 var path = require("path");
 var converter = require("json-2-csv");
 
-var input_path  = path.join(__dirname, "../examples/output/flows_from_excel_rows.json");
+const flow_cat = "survey"; 
+
+var input_path  = path.join(__dirname, "../parentText/json/" + flow_cat +".json");
 var full_json_string = fs.readFileSync(input_path).toString();
 var row_obj = JSON.parse(full_json_string);
 
@@ -11,12 +13,14 @@ var row_obj = JSON.parse(full_json_string);
 
 const column_names = [ "row_id","type","from","condition","condition_var","condition_type","save_name","message_text","choice_1",
 "choice_2","choice_3","choice_4","choice_5","choice_6","choice_7","choice_8","choice_9","choice_10","image","audio","video",
-"_nodeId","no_response"];
+"obj_id","_nodeId","no_response"];
 
 async function outputFiles() {
 
 
-        var flow_names = [];
+        var short_flow_names = {};
+        var flow_names = {};
+
         for (flow in row_obj) {
             
             var curr_flow_rows = row_obj[flow];
@@ -36,9 +40,16 @@ async function outputFiles() {
                             } else if(curr_json_row[col].length == 1){
                                 csv_row[col] = curr_json_row[col][0];
                             } else{
-                                csv_row[col] = curr_json_row[col];
+                                csv_row[col] = "";
+                                curr_json_row[col].forEach(el => {
+                                    if (el){
+                                        csv_row[col] = csv_row[col] + el + ";";
+                                    }else{
+                                        csv_row[col] = csv_row[col] + ";";
+                                    }
+                                     });
+                            
                             }
-
                             
                         }else{
                             csv_row[col] = curr_json_row[col];
@@ -58,12 +69,21 @@ async function outputFiles() {
             const replaceWith_2 = '_';
             let flow_sheet_name = String(flow).replace(searchRegExp_1, replaceWith_1).replace(searchRegExp_2, replaceWith_2);
             if (flow_sheet_name.length >31){
-                flow_sheet_name = flow_sheet_name.substring(0,31);
+                flow_sheet_name = flow_sheet_name.substring(0,28);
+                if (flow_sheet_name.endsWith("_")){
+                    flow_sheet_name = flow_sheet_name.slice(0, -1);;
+                }
             }
        
-
-            flow_names.push(flow_sheet_name);
-            var output_path = path.join(__dirname, "../examples/output/csv-files/flows_from_excel/"+ flow_sheet_name + ".csv");
+            if (short_flow_names.hasOwnProperty(flow_sheet_name)){
+                short_flow_names[flow_sheet_name] =  short_flow_names[flow_sheet_name] +1;
+                flow_sheet_name = flow_sheet_name + "_" + short_flow_names[flow_sheet_name];
+            }else{
+                short_flow_names[flow_sheet_name] = 1;
+            }
+            
+            flow_names[flow] = flow_sheet_name;
+            var output_path = path.join(__dirname, "../parentText/csv/"+ flow_cat + "/" + flow_sheet_name + ".csv");
 
 
 
@@ -76,17 +96,19 @@ async function outputFiles() {
 
     }
     var content_csv = [];
-    flow_names.forEach(name =>{
+    for (fl_name in flow_names){
         let content_row = {};
         content_row.flow_type = "conversation";
-        content_row.flow_name = name;
+        content_row.flow_name = fl_name;
+        content_row.sheet_name = flow_names[fl_name];
         content_row.status = "released";
         content_csv.push(content_row);
-    })
+    }
+    
 
 
 
-    var output_path = path.join(__dirname, "../examples/output/csv-files/flows_from_excel/"+ "==content_list==.csv");
+    var output_path = path.join(__dirname, "../parentText/csv/" + flow_cat + "/==content_list==.csv");
     let csvString = await converter.json2csvAsync(content_csv);
     fs.writeFileSync(output_path, csvString);
 
