@@ -3,7 +3,19 @@ var fs = require('fs');
 var path = require("path");
 var converter = require("json-2-csv");
 
-const flow_cat = "survey"; 
+//const flow_cat = "content-extra";
+//const flow_cat = "content-relax"; 
+//const flow_cat = "content-positive"; 
+//const flow_cat = "content-time"; 
+//const flow_cat = "help"; 
+//const flow_cat = "supportive"; 
+//const flow_cat = "survey"; 
+//const flow_cat = "activity-adult"; 
+//const flow_cat = "activity-baby"; 
+//const flow_cat = "activity-child"; 
+//const flow_cat = "activity-teen"; 
+//const flow_cat = "welcome"; 
+const flow_cat = "others"; 
 
 var input_path  = path.join(__dirname, "../parentText/json/" + flow_cat +".json");
 var full_json_string = fs.readFileSync(input_path).toString();
