@@ -1,0 +1,8 @@
+row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
+1,send_message,start,,,,,This is the tickbox example flow.,Show a Yes/No question that assumes Yes as an answer,Show a Yes/No question that assumes No as an answer,,,,,,,,,,,,,3e87518c-e055-4c46-89d9-5f2c92d2648c,
+2,wait_for_response,1,,,,,,,,,,,,,,,,,,,,578c4916-5b29-4470-bc6b-c73ca5946e26,
+3,send_message,2,Show a Yes/No question that assumes Yes as an answer,,has_only_phrase,,This question is a Yes/No question where the assumed answer is Yes,Yes,No,,,,,,,,,,,,,47ea890f-b8f8-4068-8b09-ebf461c339a7,
+4,send_message,2,Show a Yes/No question that assumes No as an answer,,has_only_phrase,,This question is a Yes/No question where the assumed answer is No,Yes,No,,,,,,,,,,,,,77c887dd-f5d9-4f63-a4c0-68be89b663e1,
+5,wait_for_response,3;4,,,,,,,,,,,,,,,,,,,,e027bc13-016d-4f5f-adb4-e638f633f167,
+6,send_message,5,Yes,,has_only_phrase,,You chose Yes,,,,,,,,,,,,,,,e61ec16e-c5f1-42b9-8d51-36af502ae67d,
+7,send_message,5;5,No;No,,has_only_phrase;has_only_phrase,,You chose No,,,,,,,,,,,,,,,0c68f3b5-cba0-4373-9277-336ceb5a1e63,

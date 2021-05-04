@@ -1,0 +1,106 @@
+{
+  "version": "13",
+  "site": "https://rapidpro.idems.international",
+  "flows": [
+    {
+      "name": "test isolated node",
+      "uuid": "c75fe240-db5c-452b-bfbe-3bf05903692f",
+      "spec_version": "13.1.0",
+      "language": "base",
+      "type": "messaging",
+      "nodes": [
+        {
+          "uuid": "6c2942c7-d5d8-4468-8622-264b81f80a11",
+          "actions": [
+            {
+              "attachments": [],
+              "text": "this is msg1 in main tree",
+              "type": "send_msg",
+              "quick_replies": [],
+              "uuid": "fdf22da6-97d4-4d07-a9e9-bad3e2f0179b"
+            }
+          ],
+          "exits": [
+            {
+              "uuid": "4acb6e94-cc84-4b0a-acf8-ad6330032aa5",
+              "destination_uuid": "2e7a3ec6-7651-4685-820f-6ac6b785d851"
+            }
+          ]
+        },
+        {
+          "uuid": "2e7a3ec6-7651-4685-820f-6ac6b785d851",
+          "actions": [
+            {
+              "attachments": [],
+              "text": "this is msg2 in main tree",
+              "type": "send_msg",
+              "all_urns": false,
+              "quick_replies": [],
+              "uuid": "d8efb4b8-a15f-4a6c-9459-33dcfd0eb6bf"
+            }
+          ],
+          "exits": [
+            {
+              "uuid": "46cb6a3e-7b47-4905-a5a8-401e76121392",
+              "destination_uuid": null
+            }
+          ]
+        },
+        {
+          "uuid": "c948685c-92de-401a-9d0d-e2921ae661ef",
+          "actions": [
+            {
+              "attachments": [],
+              "text": "I am an isolated node",
+              "type": "send_msg",
+              "all_urns": false,
+              "quick_replies": [],
+              "uuid": "b4bd00b7-3c07-4d1e-bca0-d944395bcf6c"
+            }
+          ],
+          "exits": [
+            {
+              "uuid": "1f00ee6c-2fdf-4f9c-a878-e5474f66a294",
+              "destination_uuid": null
+            }
+          ]
+        }
+      ],
+      "_ui": {
+        "nodes": {
+          "6c2942c7-d5d8-4468-8622-264b81f80a11": {
+            "position": {
+              "left": 0,
+              "top": 0
+            },
+            "type": "execute_actions"
+          },
+          "2e7a3ec6-7651-4685-820f-6ac6b785d851": {
+            "position": {
+              "left": 0,
+              "top": 140
+            },
+            "type": "execute_actions"
+          },
+          "c948685c-92de-401a-9d0d-e2921ae661ef": {
+            "position": {
+              "left": 560,
+              "top": 260
+            },
+            "type": "execute_actions"
+          }
+        }
+      },
+      "revision": 5,
+      "expire_after_minutes": 10080,
+      "metadata": {
+        "revision": 1
+      },
+      "localization": {}
+    }
+  ],
+  "campaigns": [],
+  "triggers": [],
+  "fields": [],
+  "groups": []
+}

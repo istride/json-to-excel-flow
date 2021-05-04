@@ -1,0 +1,8 @@
+row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
+1,send_message,start,,,,,This is the tickbox example flow.,Show a tickbox that is ticked by default.,Show a tickbox that is unticked by default.,,,,,,,,,,,,,10b385b3-610c-4045-81bb-d7da2873ae99,
+2,wait_for_response,1,,,,,,,,,,,,,,,,,,,,e9fc2a6e-f66d-4ce5-b775-db98ef829d60,
+3,send_message,2,Show a tickbox that is ticked by default.,,has_only_phrase,,This tickbox is ticked by default.,Ticked Value,Unticked Value,,,,,,,,,,,,,c1125649-9846-4229-a70e-69190177f7e8,
+4,send_message,2,Show a tickbox that is unticked by default.,,has_only_phrase,,This tickbox is unticked by default.,Ticked Value,Unticked Value,,,,,,,,,,,,,265e0d92-79ae-4866-9525-8a41d5d9cc24,
+5,wait_for_response,3;4,,,,,,,,,,,,,,,,,,,,cb3b8b56-da11-4d74-bd5f-6443febb7179,
+6,send_message,5,Ticked Value,,has_only_phrase,,You chose ticked.,,,,,,,,,,,,,,,939c58b7-e081-41fe-b858-65db1cdfd402,
+7,send_message,5;5,Unticked Value;Unticked Value,,has_only_phrase;has_only_phrase,,You chose unticked.,,,,,,,,,,,,,,,25f6bd91-0416-456b-a394-ca9543ce87f6,

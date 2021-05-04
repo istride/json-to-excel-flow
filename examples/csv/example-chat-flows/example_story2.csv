@@ -1,0 +1,13 @@
+row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
+1,send_message,start,,,,,This flow shows an example of the story mode.,Start story,,,,,,,,,,,,,,33c4b2ea-664d-488f-a72b-76bfea45d2c5,
+2,wait_for_response,1,,,,,,,,,,,,,,,,,,,,f1b8c63b-82cb-443b-a749-c5fa65fc00d8,
+3,send_message,2,Start story,,has_only_phrase,,"<p>Top text</p>
+<p><img class=""block-image"" src=""assets/plh_assets/plh_images/modules/mod_praise/illustrated_story/@fields.guidenumber/is_1.svg""></p>
+<p>Bottom text</p> https://plh-demo1.idems.international/chat/msg-info?isStory=true",Next,,,,,,,,,,,,,,7f980080-56b5-49cd-ad6c-807fb91be90c,
+4,wait_for_response,3,,,,,,,,,,,,,,,,,,,,028c7285-c2a5-45f6-aeab-990e8fa85ff3,
+5,send_message,4,Next,,has_only_phrase,,"<p>Top text 2</p>
+<p><img class=""block-image"" src=""assets/plh_assets/plh_images/modules/mod_praise/illustrated_story/@fields.guidenumber/is_2.svg""></p>
+<p>Bottom text 2</p> https://plh-demo1.idems.international/chat/msg-info?isStory=true",Previous,Next,,,,,,,,,,,,,36eedd3e-3e9b-46ee-bd75-6155e9b7464d,
+6,wait_for_response,5,,,,,,,,,,,,,,,,,,,,cd9b3248-7cea-4d9d-a9f1-818113e3d5ec,
+7,send_message,6,Next,,has_only_phrase,,Now we're back in regular mode. ,,,,,,,,,,,,,,,e894a9e5-2e8a-4633-afb7-ef91a33b10e7,
+8,go_to,6,Previous,,has_only_phrase,,3,,,,,,,,,,,,,,,,

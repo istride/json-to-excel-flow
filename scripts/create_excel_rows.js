@@ -2,7 +2,8 @@ var fs = require('fs');
 var path = require("path");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/all_test_flows.json");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/flows_from_excel.json");
-var input_path = path.join(__dirname, "../parentText/plh-international-flavour-new.json");
+//var input_path = path.join(__dirname, "../examples/_input_flows/router_test_cases.json");
+var input_path = path.join(__dirname, "../parentText/_input_flows/plh-international-flavour.json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
@@ -11,6 +12,7 @@ var obj_flows = JSON.parse(json_string);
 
 
 var cat_file_names = [];
+/*
 cat_file_names.push({ flow_cat_name: "PLH - Help", file_name: "help" })
 cat_file_names.push({ flow_cat_name: "PLH - Content - Relax", file_name: "content-relax" });
 cat_file_names.push({ flow_cat_name: "PLH - Content - Extra", file_name: "content-extra" });
@@ -22,18 +24,20 @@ cat_file_names.push({ flow_cat_name: "PLH - Activity - Child", file_name: "activ
 cat_file_names.push({ flow_cat_name: "PLH - Activity - Baby", file_name: "activity-baby" });
 cat_file_names.push({ flow_cat_name: "PLH - Activity - Teen", file_name: "activity-teen" });
 cat_file_names.push({ flow_cat_name: "PLH - Supportive", file_name: "supportive" });
-
-
-
+cat_file_names.push({ flow_cat_name: "PLH - Welcome", file_name: "welcome" });
+*/
+cat_file_names.push({ flow_cat_name: "PLH - Survey", file_name: "survey" });
+// cat_file_names.push({ flow_cat_name: "", file_name: "example-router-cases" });
+/*
 const other_cat_names = ["PLH - Help", "PLH - Activity", "PLH - Content", "PLH - Supportive", "PLH - Survey", "PLH - Welcome"]
 var file_name = "others";
+*/
 
 
 
-
-//for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
-    //var flow_cat_name = cat_file_names[fl_cat].flow_cat_name;
-    //var file_name = cat_file_names[fl_cat].file_name;
+for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
+    var flow_cat_name = cat_file_names[fl_cat].flow_cat_name;
+    var file_name = cat_file_names[fl_cat].file_name;
     
     var flows_sheets = {}
 
@@ -41,12 +45,12 @@ var file_name = "others";
 
 
         flow = obj_flows.flows[fl];
-/*
+
         if (!flow.name.startsWith(flow_cat_name)) {
             continue
-        }*/
+        }
 
-        
+        /*
         var is_other_flow = true;
         other_cat_names.forEach(cat => {
             if (flow.name.startsWith(cat)){
@@ -58,7 +62,7 @@ var file_name = "others";
         }
         
 
-
+*/
 
         console.log(flow.name)
 
@@ -102,12 +106,12 @@ var file_name = "others";
 
 
     var flows_sheets = JSON.stringify(flows_sheets, null, 2);
-    var output_path = path.join(__dirname, "../parentText/json/" + file_name + ".json");
+    var output_path = path.join(__dirname, "../examples/json/" + file_name + ".json");
     fs.writeFile(output_path, flows_sheets, function (err, result) {
         if (err) console.log('error', err);
     });
 
-//}
+}
 
 //////////////////////////////////////////////////////////////////////////////
 function addParents(nodes) {
@@ -438,6 +442,7 @@ function createRouterRow(curr_node, row_counter, from_row) {
             } else if (curr_node.router.operand == "@contact.groups") {
                 curr_row.type = "split_by_group";
                 curr_row.message_text = curr_node.router.cases[0].arguments[1];
+                curr_row.obj_id = curr_node.router.cases[0].arguments[0];
             } else {
                 curr_row.type = "split_by_value";
                 curr_row.message_text = curr_node.router.operand;

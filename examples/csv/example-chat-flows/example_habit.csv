@@ -1,0 +1,8 @@
+row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
+1,send_message,start,,,,,This flow shows the functionality of printing the number of recorded habits. ,,,,,,,,,,,,,,,dbf35270-c54f-4033-b7d7-66225e688e9d,
+2,split_by_value,1,,,,,@habit.habit_relax.weekly_count,,,,,,,,,,,,,,,a3f0bcf1-4907-4fad-a15a-f4df49e49dfb,
+3,send_message,2,,,,,In the past 7 days the habit habit_relax was recorded @habit.habit_relax.weekly_count times. ,,,,,,,,,,,,,,,ba5c13b0-2c25-4f48-8e08-4b397e342bfc,
+4,send_message,2,1,@habit.habit_relax.weekly_count,has_only_phrase,,In the past 7 days the habit habit_relax was recorded @habit.habit_relax.weekly_count time. ,,,,,,,,,,,,,,,32c561a6-f48d-4a30-b2d5-8ccd71ff36bf,
+5,split_by_value,3;4,,,,,@habit.habit_spend_time.weekly_count,,,,,,,,,,,,,,,529e1cb9-5ea2-488e-9759-9b86e3707ad2,
+6,send_message,5,,,,,In the past 7 days the habit habit_spend_time was recorded @habit.habit_spend_time.weekly_count times. ,Done,,,,,,,,,,,,,,f36107b0-cc48-45c5-953f-14e66f5b9e8b,
+7,send_message,5,1,@habit.habit_spend_time.weekly_count,has_only_phrase,,In the past 7 days the habit habit_spend_time was recorded @habit.habit_spend_time.weekly_count time. ,Done,,,,,,,,,,,,,,aee1b265-a480-4f12-b422-55f6a48691c6,
