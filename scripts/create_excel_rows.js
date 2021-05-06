@@ -2,8 +2,8 @@ var fs = require('fs');
 var path = require("path");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/all_test_flows.json");
 //var input_path = path.join(__dirname, "../examples/input-rapidpro/flows_from_excel.json");
-//var input_path = path.join(__dirname, "../examples/_input_flows/router_test_cases.json");
-var input_path = path.join(__dirname, "../parentText/_input_flows/plh-international-flavour.json");
+var input_path = path.join(__dirname, "../examples/_input_flows/router_test_cases.json");
+//var input_path = path.join(__dirname, "../parentText/_input_flows/plh-international-flavour.json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
@@ -26,8 +26,8 @@ cat_file_names.push({ flow_cat_name: "PLH - Activity - Teen", file_name: "activi
 cat_file_names.push({ flow_cat_name: "PLH - Supportive", file_name: "supportive" });
 cat_file_names.push({ flow_cat_name: "PLH - Welcome", file_name: "welcome" });
 */
-cat_file_names.push({ flow_cat_name: "PLH - Survey", file_name: "survey" });
-// cat_file_names.push({ flow_cat_name: "", file_name: "example-router-cases" });
+//cat_file_names.push({ flow_cat_name: "PLH - Survey", file_name: "survey" });
+cat_file_names.push({ flow_cat_name: "", file_name: "example-router-cases" });
 /*
 const other_cat_names = ["PLH - Help", "PLH - Activity", "PLH - Content", "PLH - Supportive", "PLH - Survey", "PLH - Welcome"]
 var file_name = "others";
@@ -479,6 +479,7 @@ function addConditions(curr_node, curr_row) {
     curr_row.condition = [];
     curr_row.condition_var = [];
     curr_row.condition_type = [];
+    curr_row.condition_name = [];
 
     console.log("row before adding conditions ------------------")
     console.log(curr_row)
@@ -507,6 +508,7 @@ function addConditions(curr_node, curr_row) {
                     curr_row.condition.push(null);
                     curr_row.condition_var.push(null);
                     curr_row.condition_type.push(null);
+                    curr_row.condition_name.push(null);
                 } else {
 
                     let from_cat = from_node.router.categories.filter(cat => (cat.exit_uuid == exit.uuid))[0];
@@ -526,6 +528,7 @@ function addConditions(curr_node, curr_row) {
                             curr_row.condition.push(from_cat.name.replace("Bucket ", ""));
                             curr_row.condition_var.push(null);
                             curr_row.condition_type.push(null);
+                            curr_row.condition_name.push(null);
 
                         } else if (from_node.router.type == "switch") {
                             if (from_node.router.operand == "@input.text" && from_node.router.hasOwnProperty("wait")) {
@@ -533,16 +536,20 @@ function addConditions(curr_node, curr_row) {
                                     curr_row.condition.push(null);
                                     curr_row.condition_var.push(null);
                                     curr_row.condition_type.push(null);
+                                    curr_row.condition_name.push(null);
+
                                 } else if (from_cat.name == "No Response") {
                                     curr_row.condition.push("No Response");
                                     curr_row.condition_var.push(null);
                                     curr_row.condition_type.push(null);
+                                    curr_row.condition_name.push(null);
 
                                 } else {
                                     let from_case = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
                                     curr_row.condition.push(from_case.arguments);
                                     curr_row.condition_var.push(null);
                                     curr_row.condition_type.push(from_case.type);
+                                    curr_row.condition_name.push(from_cat.name);
 
                                 }
                             } else if (from_node.router.operand == "@contact.groups") {
@@ -550,11 +557,13 @@ function addConditions(curr_node, curr_row) {
                                     curr_row.condition.push(null);
                                     curr_row.condition_var.push(null);
                                     curr_row.condition_type.push(null);
+                                    curr_row.condition_name.push(null);
 
                                 } else {
                                     curr_row.condition.push(from_cat.name);
                                     curr_row.condition_var.push(null);
                                     curr_row.condition_type.push(null);
+                                    curr_row.condition_name.push(null);
 
                                 }
                             } else {
@@ -562,12 +571,14 @@ function addConditions(curr_node, curr_row) {
                                     curr_row.condition.push(null);
                                     curr_row.condition_var.push(null);
                                     curr_row.condition_type.push(null);
+                                    curr_row.condition_name.push(null);
 
                                 } else {
                                     let from_case = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
                                     curr_row.condition.push(from_case.arguments);
                                     curr_row.condition_var.push(from_node.router.operand);
                                     curr_row.condition_type.push(from_case.type);
+                                    curr_row.condition_name.push(from_cat.name);
 
                                 }
                             }
