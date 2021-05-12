@@ -16,7 +16,7 @@ var converter = require("json-2-csv");
 //const flow_cat = "activity-teen"; 
 //const flow_cat = "all-test-flows"; 
 //const flow_cat = "example-chat-flows"
-const flow_cat = "example-router-cases"
+const flow_cat = "router_test_cases"
 
 //const flow_cat = "others"; 
 
@@ -29,7 +29,7 @@ var row_obj = JSON.parse(full_json_string);
 
 const column_names = [ "row_id","type","from","condition","condition_var","condition_type","condition_name","save_name","message_text","choice_1",
 "choice_2","choice_3","choice_4","choice_5","choice_6","choice_7","choice_8","choice_9","choice_10","image","audio","video",
-"obj_id","_nodeId","no_response"];
+"obj_id","_nodeId","no_response","_ui_type", "_ui_position"];
 
 async function outputFiles() {
 
@@ -116,7 +116,7 @@ async function outputFiles() {
     var content_csv = [];
     for (fl_name in flow_names){
         let content_row = {};
-        content_row.flow_type = "conversation";
+        content_row.flow_type = "flow";
         content_row.flow_name = fl_name;
         content_row.sheet_name = flow_names[fl_name];
         content_row.status = "released";

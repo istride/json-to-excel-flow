@@ -1,14 +1,19 @@
 var fs = require('fs');
 var path = require("path");
-//var input_path = path.join(__dirname, "../examples/input-rapidpro/all_test_flows.json");
-//var input_path = path.join(__dirname, "../examples/input-rapidpro/flows_from_excel.json");
-var input_path = path.join(__dirname, "../examples/_input_flows/router_test_cases.json");
-//var input_path = path.join(__dirname, "../parentText/_input_flows/plh-international-flavour.json");
+
+const input_file_name = "restart_and_loop";
+//const input_file_name = "plh-international-flavour"
+
+var input_path = path.join(__dirname, "../examples/_input_flows/" + input_file_name + ".json");
+//var input_path = path.join(__dirname, "../parentText/_input_flows/"+ input_file_name + ".json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
 
 
+
+var obj_flows_with_row_ids = JSON.parse(json_string);
+obj_flows_with_row_ids.flows = [];
 
 
 var cat_file_names = [];
@@ -27,7 +32,7 @@ cat_file_names.push({ flow_cat_name: "PLH - Supportive", file_name: "supportive"
 cat_file_names.push({ flow_cat_name: "PLH - Welcome", file_name: "welcome" });
 */
 //cat_file_names.push({ flow_cat_name: "PLH - Survey", file_name: "survey" });
-cat_file_names.push({ flow_cat_name: "", file_name: "example-router-cases" });
+cat_file_names.push({ flow_cat_name: "", file_name: input_file_name });
 /*
 const other_cat_names = ["PLH - Help", "PLH - Activity", "PLH - Content", "PLH - Supportive", "PLH - Survey", "PLH - Welcome"]
 var file_name = "others";
@@ -35,20 +40,22 @@ var file_name = "others";
 
 
 
-for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
+for (let fl_cat = 0; fl_cat < cat_file_names.length; fl_cat++) {
     var flow_cat_name = cat_file_names[fl_cat].flow_cat_name;
     var file_name = cat_file_names[fl_cat].file_name;
-    
+
     var flows_sheets = {}
 
-    for (fl = 0; fl < obj_flows.flows.length; fl++) {
 
+    for (fl = 0; fl < obj_flows.flows.length; fl++) {
 
         flow = obj_flows.flows[fl];
 
         if (!flow.name.startsWith(flow_cat_name)) {
             continue
         }
+
+
 
         /*
         var is_other_flow = true;
@@ -63,6 +70,9 @@ for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
         
 
 */
+        // copy of flow with row ids associated to each node
+        //var flow_with_row_ids = JSON.parse(JSON.stringify(flow));
+        //flow_with_row_ids.nodes = [];
 
         console.log(flow.name)
 
@@ -72,7 +82,7 @@ for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
 
 
         var rows_obj = [];
-        
+
         var uuid_processed_nodes = [];
         var node_waiting_list = [];
         var uuid_waiting_list = [];
@@ -93,7 +103,7 @@ for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
                 console.log(curr_node.uuid)
                 curr_node.unprocessed_parents = [];
                 from_row_id = null;
-                // processNode(curr_node, null)
+
             }
 
         }
@@ -104,6 +114,7 @@ for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
 
     }
 
+    obj_flows_with_row_ids.flows.push(JSON.parse(JSON.stringify(flow)))
 
     var flows_sheets = JSON.stringify(flows_sheets, null, 2);
     var output_path = path.join(__dirname, "../examples/json/" + file_name + ".json");
@@ -112,6 +123,14 @@ for (let fl_cat=0; fl_cat<cat_file_names.length; fl_cat++) {
     });
 
 }
+
+obj_flows_with_row_ids = JSON.stringify(obj_flows_with_row_ids , null, 2);
+var output_path = path.join(__dirname, "../examples/input_with_row_ids/" + input_file_name + ".json");
+fs.writeFile(output_path, obj_flows_with_row_ids, function (err, result) {
+    if (err) console.log('error', err);
+});
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 function addParents(nodes) {
@@ -136,6 +155,7 @@ function processNode(curr_node, from_row_id) {
     console.log("curr node id " + curr_node.uuid)
     console.log("from row id " + from_row_id)
 
+
     if (curr_node.unprocessed_parents.length == 0) {
         // check if in waiting list and remove it
         let wl_index = uuid_waiting_list.indexOf(curr_node.uuid);
@@ -158,6 +178,7 @@ function processNode(curr_node, from_row_id) {
                 createRouterRow(curr_node, row_counter, from_row_id)
 
                 from_row_id = row_counter;
+                
                 row_counter++;
 
             } else {
@@ -189,6 +210,7 @@ function processNode(curr_node, from_row_id) {
                     }
 
                     from_row_id = row_counter;
+                   
                     row_counter++;
                 });
 
@@ -196,8 +218,18 @@ function processNode(curr_node, from_row_id) {
 
             }
 
-            // add conditions to the first row corresponding to the node
+            curr_node.row_id = [];
+            // rows created for the node
             var node_rows = rows_obj.filter(r => (r._nodeId == curr_node.uuid));
+
+            // add _ui to row and save all row ids in rapidpro node
+            node_rows.forEach(rw => {
+                curr_node.row_id.push(rw.row_id);
+                rw._ui_type = flow._ui.nodes[curr_node.uuid].type;
+                rw._ui_position = [flow._ui.nodes[curr_node.uuid].position.left, flow._ui.nodes[curr_node.uuid].position.top];
+            })
+
+            // add conditions to the first row corresponding to the node
             var first_row = node_rows.sort((r1, r2) => r1.row_id - r2.row_id)[0];
             addConditions(curr_node, first_row)
 
@@ -250,6 +282,7 @@ function processNode(curr_node, from_row_id) {
 
 
     }
+
 
     return
 
@@ -305,6 +338,7 @@ function createSendMsgRow(curr_node, curr_action, row_counter, from_row) {
 
     })
     curr_row._nodeId = curr_node.uuid;
+
 
     addFromRows(curr_node, curr_row, from_row)
 
@@ -545,11 +579,32 @@ function addConditions(curr_node, curr_row) {
                                     curr_row.condition_name.push(null);
 
                                 } else {
-                                    let from_case = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
-                                    curr_row.condition.push(from_case.arguments);
+                                    let from_cases = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid));
+
+                                    curr_row.condition.push(from_cases[0].arguments);
                                     curr_row.condition_var.push(null);
-                                    curr_row.condition_type.push(from_case.type);
+                                    curr_row.condition_type.push(from_cases[0].type);
                                     curr_row.condition_name.push(from_cat.name);
+
+                                    // if multiple cases are associated to the same category, 
+                                    // the from row needs to be repeated in the from list so that one condition per case is added (with same cat name)
+                                    if (from_cases.length > 1) {
+                                        let index_from_row_id = curr_row.from.indexOf(from_row_id);
+                                        from_cases.slice(1).forEach(cs => {
+                                            curr_row.from.splice(index_from_row_id, 0, from_row_id);
+
+                                            curr_row.condition.push(cs.arguments);
+                                            curr_row.condition_var.push(null);
+                                            curr_row.condition_type.push(cs.type);
+                                            curr_row.condition_name.push(from_cat.name);
+
+                                        });
+
+                                    }
+
+
+
+
 
                                 }
                             } else if (from_node.router.operand == "@contact.groups") {
@@ -574,11 +629,25 @@ function addConditions(curr_node, curr_row) {
                                     curr_row.condition_name.push(null);
 
                                 } else {
-                                    let from_case = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
-                                    curr_row.condition.push(from_case.arguments);
+                                    let from_cases = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
+                                    curr_row.condition.push(from_cases[0].arguments);
                                     curr_row.condition_var.push(from_node.router.operand);
-                                    curr_row.condition_type.push(from_case.type);
+                                    curr_row.condition_type.push(from_cases[0].type);
                                     curr_row.condition_name.push(from_cat.name);
+
+                                    if (from_cases.length > 1) {
+                                        let index_from_row_id = curr_row.from.indexOf(from_row_id);
+                                        from_cases.slice(1).forEach(cs => {
+                                            curr_row.from.splice(index_from_row_id, 0, from_row_id);
+
+                                            curr_row.condition.push(cs.arguments);
+                                            curr_row.condition_var.push(from_node.router.operand);
+                                            curr_row.condition_type.push(cs.type);
+                                            curr_row.condition_name.push(from_cat.name);
+
+                                        });
+
+                                    }
 
                                 }
                             }
