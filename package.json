@@ -1,0 +1,25 @@
+{
+  "name": "json-to-excel-flow",
+  "version": "1.0.0",
+  "description": "Converts Rapid PRO JSON files to Excel spreadsheets",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IDEMSInternational/json-to-excel-flow.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/IDEMSInternational/json-to-excel-flow/issues"
+  },
+  "homepage": "https://github.com/IDEMSInternational/json-to-excel-flow#readme",
+  "dependencies": {
+    "json-2-csv": "^3.11.0"
+  }
+}
