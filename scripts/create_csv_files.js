@@ -1,7 +1,6 @@
-
-var fs = require('fs');
-var path = require("path");
-var converter = require("json-2-csv");
+const fs = require('fs');
+const path = require("path");
+const converter = require("json-2-csv");
 
 //const flow_cat = "content-extra";
 //const flow_cat = "content-relax"; 
@@ -16,7 +15,7 @@ var converter = require("json-2-csv");
 //const flow_cat = "activity-teen"; 
 //const flow_cat = "all-test-flows"; 
 //const flow_cat = "example-chat-flows"
-const flow_cat = "router_test_cases"
+const flow_cat = "example-router-cases";
 
 //const flow_cat = "others"; 
 
@@ -25,61 +24,22 @@ var input_path  = path.join(__dirname, "../examples/json/" + flow_cat +".json");
 var full_json_string = fs.readFileSync(input_path).toString();
 var row_obj = JSON.parse(full_json_string);
 
-
-
 const column_names = [ "row_id","type","from","condition","condition_var","condition_type","condition_name","save_name","message_text","choice_1",
 "choice_2","choice_3","choice_4","choice_5","choice_6","choice_7","choice_8","choice_9","choice_10","image","audio","video",
 "obj_id","_nodeId","no_response","_ui_type", "_ui_position"];
 
+outputFiles().then(() => {
+    console.log("I outputted the files");
+});
+
 async function outputFiles() {
-
-
         var short_flow_names = {};
         var flow_names = {};
 
         for (flow in row_obj) {
-            
             var curr_flow_rows = row_obj[flow];
-            
-            var curr_flow_csv = [];
-            for (var r=0; r<curr_flow_rows.length; r++){
-                var curr_json_row = curr_flow_rows[r];
-               
-                var csv_row = {};
-                column_names.forEach(col =>{
-                    if (curr_json_row.hasOwnProperty(col) ){
-                        
-                        if (Array.isArray(curr_json_row[col]) ){
-                           
-                            if (curr_json_row[col].every(function(v) { return v == null })){
-                                csv_row[col] = ""
-                            } else{
-                                csv_row[col] = "";
-                                curr_json_row[col].forEach(el => {
-                                    if (el){
-                                        csv_row[col] = csv_row[col] + el + ";";
-                                    }else{
-                                        csv_row[col] = csv_row[col] + ";";
-                                    }
-                                     });
-                                     csv_row[col] = csv_row[col].slice(0,-1)
-                            
-                            }
-                            
-                        }else{
-                            csv_row[col] = curr_json_row[col];
-                        }
-                       
-                    }else{
-                        csv_row[col] = "";
-                    }
-                    
-                })
-                
-                curr_flow_csv.push(csv_row);
-            }
+            var curr_flow_csv = curr_flow_rows.map(processNode);
 
-        
             const searchRegExp_1 = /\s-\s/g;
             const replaceWith_1 = '-';
             const searchRegExp_2 = /\s/g;
@@ -103,16 +63,10 @@ async function outputFiles() {
             var output_path = path.join(__dirname, "../examples/csv/"+ flow_cat + "/" + flow_sheet_name + ".csv");
             // var output_path = path.join(__dirname, "../parentText/csv/"+ flow_cat + "/" + flow_sheet_name + ".csv");
 
-
-
-      
-       
-        
         let csvString = await converter.json2csvAsync(curr_flow_csv);
         fs.writeFileSync(output_path, csvString);
-        
-
     }
+
     var content_csv = [];
     for (fl_name in flow_names){
         let content_row = {};
@@ -122,19 +76,32 @@ async function outputFiles() {
         content_row.status = "released";
         content_csv.push(content_row);
     }
-    
-
-
 
     var output_path = path.join(__dirname, "../examples/csv/" + flow_cat + "/==content_list==.csv");
     //var output_path = path.join(__dirname, "../parentText/csv/" + flow_cat + "/==content_list==.csv");
     let csvString = await converter.json2csvAsync(content_csv);
     fs.writeFileSync(output_path, csvString);
-
 }
 
-outputFiles().then(() => {
-    console.log("I outputted the files");
-});
+function processNode(node) {
+    let entries = column_names.map(col => [col, propertyToColumn(node, col)]);
+    return Object.fromEntries(entries);
+}
 
+function propertyToColumn(node, col) {
+    if (node.hasOwnProperty(col) ) {
+        let prop = node[col];
 
+        if (Array.isArray(prop)) {
+            if (prop.every(v => v == null )) {
+                return "";
+            } else {
+                return prop.map(el => el ? el : '').join(';');
+            }
+        } else {
+            return prop;
+        }
+    } else {
+        return "";
+    }
+}
