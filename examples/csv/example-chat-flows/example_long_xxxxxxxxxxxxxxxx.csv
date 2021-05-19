@@ -1,6 +1,0 @@
-row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
-1,send_message,start,,,,,This is the media example flow. ,,,,,,,,,,,,,,,132f5014-456e-4e25-ada8-3e5650e1d69b,
-2,send_message,1,,,,,This message has an attached image.,,,,,,,,,,,plh_images/characters/guide1/neutral.s,,,,1413a78e-3d4c-4c9c-85f4-7ed525c9c553,
-3,send_message,2,,,,,"This is a multiple choice question with images attached to the choices, displaying both media and text.",image1,image2,,,,,,,,,,,,,81335200-721c-4481-a1f2-4ba62d4d76e1,
-4,wait_for_response,3,,,,,,,,,,,,,,,,,,,,6ef3bf25-09a7-4843-be35-acd8803f963e,
-5,send_message,4,image1,,has_only_phrase,,"This is a multiple choice question with images attached to the choices, displaying only media.",image1,image2,,,,,,,,,,,,,b92ee751-b5e7-41b8-89ca-77e54bcd2ff3,

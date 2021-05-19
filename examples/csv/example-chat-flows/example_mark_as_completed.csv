@@ -1,8 +1,0 @@
-row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
-1,send_message,start,,,,,This is the mark_as_completed example flow.,Mark task as completed,Mark this flow as completed,,,,,,,,,,,,,83429b45-c71b-477d-9459-6205dbb05abb,
-2,wait_for_response,1,,,,,,,,,,,,,,,,,,,,a5c8b362-1675-491b-be21-269088cad747,
-3,send_message,2,Mark task as completed,,has_only_phrase,,(a message),,,,,,,,,,,,,,,0c701397-6a99-4cf9-a002-6b5a53d62b30,
-4,save_value,3,,,,task_relax__completed,true,,,,,,,,,,,,,,,764c22f9-8c42-4f61-94a9-b36640377ff9,
-5,send_message,2,Mark this flow as completed,,has_only_phrase,,(a message),,,,,,,,,,,,,,,368bc5a9-0dad-4b05-9461-c056f3291a17,
-6,save_value,5,,,,example_mark_as_completed__completed,true,,,,,,,,,,,,,,,5a45dece-11ff-4469-8089-d402000fd95d,
-7,send_message,4;6,,,,,Some text. Flow completed = @fields.example_mark_as_completed__completed,,,,,,,,,,,,,,,a0edc70c-0445-4a5d-a04d-e62b33db0ced,

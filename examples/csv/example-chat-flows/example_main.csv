@@ -1,3 +1,0 @@
-row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
-1,send_message,start,,,,,This is the main example flow. ,,,,,,,,,,,,,,,5758da93-94a6-4b7c-9202-d5acb5e97826,
-2,send_message,1,,,,,This is a multiple choice question.,First option: launch example_media flow,Second option: launch example_tickbox flow,Third option: launch example_variables flow,Fourth option: launch example_story flow,Stay in this flow.,,,,,,,,,,1ad3ea29-78a4-4114-954f-c53115a5a7f2,

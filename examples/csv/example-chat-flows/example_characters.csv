@@ -1,6 +1,0 @@
-row_id,type,from,condition,condition_var,condition_type,save_name,message_text,choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10,image,audio,video,obj_id,_nodeId,no_response
-1,send_message,start,,,,,"This flow shows the functionality of the character, character_media and character_display columns.",,,,,,,,,,,,,,,45a6f9aa-c205-4a45-870d-49dd5130c608,
-2,send_message,1,,,,,This text is said by @fields.neighbour. A neutral image of neighbour is displayed in front of this text.,,,,,,,,,,,,,,,fa798b25-ef0a-4cc9-83d3-6d09f7a71ac6,
-3,send_message,2,,,,,This text is said by @fields.neighbour. No image of neighbour is displayed.,,,,,,,,,,,,,,,9ca5e05c-58bd-4806-9a1f-fe4e90e1d8e5,
-4,send_message,3,,,,,This text is said by @fields.neighbour. A happy image of neighbour is displayed in front of this text. The link to this image is the happy_asset associated to neighbour in the character_names sheet.,,,,,,,,,,,,,,,a72b1faa-0c0d-4fd1-9cf0-9b5ff0bf9d94,
-5,send_message,4,,,,,This is the end of the character example flow.,,,,,,,,,,,,,,,dbc4411c-d256-470c-b6ac-f6e8a908a214,
