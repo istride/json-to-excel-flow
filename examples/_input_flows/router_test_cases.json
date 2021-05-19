@@ -3,7 +3,7 @@
   "site": "https://rapidpro.idems.international",
   "flows": [
     {
-      "name": "router_test_cases",
+      "name": "router_test_cases_original",
       "uuid": "9a0fb40e-cc91-4933-8234-ca3dfab490ae",
       "spec_version": "13.1.0",
       "language": "base",
@@ -112,6 +112,12 @@
                 "type": "has_pattern",
                 "uuid": "2601c7c8-0ea1-4b3d-8680-d4ae57fa25ee",
                 "category_uuid": "f9c0d183-f541-4e04-92e5-34690d69cbf7"
+              },
+              {
+                "arguments": [],
+                "type": "has_text",
+                "uuid": "2816fd5d-1583-4c51-8884-0f0f2018e9ce",
+                "category_uuid": "73a9da06-259e-42f5-a9c4-0b4d0a50a34c"
               }
             ],
             "categories": [
@@ -176,6 +182,11 @@
                 "exit_uuid": "b03bbd01-c1ea-4290-a84e-b082900f829f"
               },
               {
+                "uuid": "73a9da06-259e-42f5-a9c4-0b4d0a50a34c",
+                "name": "Has Text",
+                "exit_uuid": "118114d7-a138-47fd-8ddb-27e5874977a7"
+              },
+              {
                 "uuid": "fee3c695-fe06-4854-99f3-a31de06078e3",
                 "name": "Other",
                 "exit_uuid": "617b715f-e137-4edd-801a-47fe9b557086"
@@ -235,6 +246,10 @@
             {
               "uuid": "b03bbd01-c1ea-4290-a84e-b082900f829f",
               "destination_uuid": "ea45a119-19b6-42c7-acb4-7d0fc53bf336"
+            },
+            {
+              "uuid": "118114d7-a138-47fd-8ddb-27e5874977a7",
+              "destination_uuid": "6710c909-5e32-4b75-9c51-6d173a155820"
             },
             {
               "uuid": "617b715f-e137-4edd-801a-47fe9b557086",
@@ -351,19 +366,19 @@
           ]
         },
         {
-          "uuid": "f21c7695-4d2c-4831-b0cf-30e9c2a8eed6",
+          "uuid": "6710c909-5e32-4b75-9c51-6d173a155820",
           "actions": [
             {
               "attachments": [],
-              "text": "<=",
+              "text": "has text",
               "type": "send_msg",
               "quick_replies": [],
-              "uuid": "be4bffe1-a88e-479a-bc9e-43e6022e3dee"
+              "uuid": "1244f969-2b97-4902-9317-3f8d4628d306"
             }
           ],
           "exits": [
             {
-              "uuid": "5153b853-9d6f-40bf-b98a-fa623761aa21",
+              "uuid": "ed18dbe4-318f-4360-97a6-4a3dc3490f5b",
               "destination_uuid": null
             }
           ]
@@ -400,6 +415,24 @@
           "exits": [
             {
               "uuid": "fe286873-fb20-448e-8261-e8f26f16753f",
+              "destination_uuid": null
+            }
+          ]
+        },
+        {
+          "uuid": "f21c7695-4d2c-4831-b0cf-30e9c2a8eed6",
+          "actions": [
+            {
+              "attachments": [],
+              "text": "<=",
+              "type": "send_msg",
+              "quick_replies": [],
+              "uuid": "be4bffe1-a88e-479a-bc9e-43e6022e3dee"
+            }
+          ],
+          "exits": [
+            {
+              "uuid": "5153b853-9d6f-40bf-b98a-fa623761aa21",
               "destination_uuid": null
             }
           ]
@@ -551,6 +584,20 @@
               "cases": {}
             }
           },
+          "f21245eb-9ade-4caa-8175-b37ebb2bf2b0": {
+            "position": {
+              "left": 900,
+              "top": 200
+            },
+            "type": "execute_actions"
+          },
+          "d22a0925-095f-4a73-bd49-8bd897f2ee19": {
+            "position": {
+              "left": 1200,
+              "top": 200
+            },
+            "type": "execute_actions"
+          },
           "74145984-4cf1-437f-b395-8b6d184684e8": {
             "position": {
               "left": 0,
@@ -572,13 +619,6 @@
             },
             "type": "execute_actions"
           },
-          "17bf5b89-7fb6-4748-acf7-e8580b36d219": {
-            "position": {
-              "left": 780,
-              "top": 460
-            },
-            "type": "execute_actions"
-          },
           "099b2942-db2b-4149-984e-c16bdbb1b927": {
             "position": {
               "left": 980,
@@ -586,24 +626,31 @@
             },
             "type": "execute_actions"
           },
-          "f21245eb-9ade-4caa-8175-b37ebb2bf2b0": {
-            "position": {
-              "left": 900,
-              "top": 200
-            },
-            "type": "execute_actions"
-          },
-          "d22a0925-095f-4a73-bd49-8bd897f2ee19": {
-            "position": {
-              "left": 1200,
-              "top": 200
-            },
-            "type": "execute_actions"
-          },
           "f21c7695-4d2c-4831-b0cf-30e9c2a8eed6": {
             "position": {
               "left": 1240,
-              "top": 420
+              "top": 480
+            },
+            "type": "execute_actions"
+          },
+          "ea45a119-19b6-42c7-acb4-7d0fc53bf336": {
+            "position": {
+              "left": 160,
+              "top": 440
+            },
+            "type": "execute_actions"
+          },
+          "17bf5b89-7fb6-4748-acf7-e8580b36d219": {
+            "position": {
+              "left": 780,
+              "top": 460
+            },
+            "type": "execute_actions"
+          },
+          "a2854836-6e4b-46a9-933a-c52f87da5a99": {
+            "position": {
+              "left": 380,
+              "top": 580
             },
             "type": "execute_actions"
           },
@@ -617,21 +664,7 @@
           "877543c7-0920-472c-a573-29d14f009ede": {
             "position": {
               "left": 1260,
-              "top": 580
-            },
-            "type": "execute_actions"
-          },
-          "a2854836-6e4b-46a9-933a-c52f87da5a99": {
-            "position": {
-              "left": 380,
-              "top": 580
-            },
-            "type": "execute_actions"
-          },
-          "ea45a119-19b6-42c7-acb4-7d0fc53bf336": {
-            "position": {
-              "left": 160,
-              "top": 440
+              "top": 600
             },
             "type": "execute_actions"
           },
@@ -651,14 +684,21 @@
             "config": {
               "cases": {}
             }
+          },
+          "6710c909-5e32-4b75-9c51-6d173a155820": {
+            "position": {
+              "left": 1420,
+              "top": 380
+            },
+            "type": "execute_actions"
           }
         },
         "stickies": {}
       },
-      "revision": 26,
+      "revision": 29,
       "expire_after_minutes": 10080,
       "metadata": {
-        "revision": 2
+        "revision": 26
       },
       "localization": {}
     }
