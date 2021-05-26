@@ -1,7 +1,9 @@
 var fs = require('fs');
 var path = require("path");
 
-const input_file_name = "restart_and_loop";
+console.log(process.argv)
+process.exit()
+const input_file_name = "no_switch_nodes";
 //const input_file_name = "plh-international-flavour"
 
 var input_path = path.join(__dirname, "../examples/_input_flows/" + input_file_name + ".json");

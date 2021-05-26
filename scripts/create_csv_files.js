@@ -16,7 +16,7 @@ var converter = require("json-2-csv");
 //const flow_cat = "activity-teen"; 
 //const flow_cat = "all-test-flows"; 
 //const flow_cat = "example-chat-flows"
-const flow_cat = "router_test_cases"
+const flow_cat = "no_switch_nodes"
 
 //const flow_cat = "others"; 
 

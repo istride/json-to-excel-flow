@@ -2,12 +2,13 @@ import os
 import pandas as pd
 import glob
 
-flow_cat = "survey"
-path = '../parentText/csv/' + flow_cat
+flow_cat = "no_switch_nodes"
+path = '../examples/csv/' + flow_cat
+# path = '../parentText/csv/' + flow_cat
 all_files = glob.glob(os.path.join(path, "*.csv"))
 
 
-writer = pd.ExcelWriter('../parentText/excel/' +flow_cat   + '.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter('../examples/excel/' +flow_cat   + '.xlsx', engine='xlsxwriter')
 
 for f in all_files:
     df = pd.read_csv(f)
