@@ -39,3 +39,8 @@ node scripts/create_excel_rows.js
 node scripts/create_csv_files.js
 python scripts/create_single_excel.py
 ```
+
+Combine multiple CSV files into one Excel spreadsheet. Where `input_dir` is the path to a directory with the CSV files to be combined, and `output_file` is the path to the Excel spreadsheet that will be created.
+```
+node scripts/create_single_excel.js <input_dir> <output_file>
+```
