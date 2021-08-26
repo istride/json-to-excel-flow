@@ -1,11 +1,11 @@
 var fs = require('fs');
 var path = require("path");
 
-const input_file_name = "restart_and_loop";
-//const input_file_name = "plh-international-flavour"
+//const input_file_name = "no_switch_nodes";
+const input_file_name = "plh-international-flavour"
 
-var input_path = path.join(__dirname, "../examples/_input_flows/" + input_file_name + ".json");
-//var input_path = path.join(__dirname, "../parentText/_input_flows/"+ input_file_name + ".json");
+//var input_path = path.join(__dirname, "../examples/_input_flows/" + input_file_name + ".json");
+var input_path = path.join(__dirname, "../parentText/_input_flows/"+ input_file_name + ".json");
 
 var json_string = fs.readFileSync(input_path).toString();
 var obj_flows = JSON.parse(json_string);
@@ -15,9 +15,9 @@ var obj_flows = JSON.parse(json_string);
 var obj_flows_with_row_ids = JSON.parse(json_string);
 obj_flows_with_row_ids.flows = [];
 
-
+/*  
 var cat_file_names = [];
-/*
+
 cat_file_names.push({ flow_cat_name: "PLH - Help", file_name: "help" })
 cat_file_names.push({ flow_cat_name: "PLH - Content - Relax", file_name: "content-relax" });
 cat_file_names.push({ flow_cat_name: "PLH - Content - Extra", file_name: "content-extra" });
@@ -30,19 +30,21 @@ cat_file_names.push({ flow_cat_name: "PLH - Activity - Baby", file_name: "activi
 cat_file_names.push({ flow_cat_name: "PLH - Activity - Teen", file_name: "activity-teen" });
 cat_file_names.push({ flow_cat_name: "PLH - Supportive", file_name: "supportive" });
 cat_file_names.push({ flow_cat_name: "PLH - Welcome", file_name: "welcome" });
+
 */
-//cat_file_names.push({ flow_cat_name: "PLH - Survey", file_name: "survey" });
-cat_file_names.push({ flow_cat_name: "", file_name: input_file_name });
-/*
+//cat_file_names.push({ flow_cat_name: "", file_name: input_file_name });
+
+
 const other_cat_names = ["PLH - Help", "PLH - Activity", "PLH - Content", "PLH - Supportive", "PLH - Survey", "PLH - Welcome"]
 var file_name = "others";
-*/
 
 
 
-for (let fl_cat = 0; fl_cat < cat_file_names.length; fl_cat++) {
-    var flow_cat_name = cat_file_names[fl_cat].flow_cat_name;
-    var file_name = cat_file_names[fl_cat].file_name;
+
+
+//for (let fl_cat = 0; fl_cat < cat_file_names.length; fl_cat++) {
+//    var flow_cat_name = cat_file_names[fl_cat].flow_cat_name;
+    //var file_name = cat_file_names[fl_cat].file_name;
 
     var flows_sheets = {}
 
@@ -50,14 +52,15 @@ for (let fl_cat = 0; fl_cat < cat_file_names.length; fl_cat++) {
     for (fl = 0; fl < obj_flows.flows.length; fl++) {
 
         flow = obj_flows.flows[fl];
-
+         
+        /*
         if (!flow.name.startsWith(flow_cat_name)) {
             continue
         }
+        */
 
 
-
-        /*
+        
         var is_other_flow = true;
         other_cat_names.forEach(cat => {
             if (flow.name.startsWith(cat)){
@@ -69,7 +72,7 @@ for (let fl_cat = 0; fl_cat < cat_file_names.length; fl_cat++) {
         }
         
 
-*/
+
         // copy of flow with row ids associated to each node
         //var flow_with_row_ids = JSON.parse(JSON.stringify(flow));
         //flow_with_row_ids.nodes = [];
@@ -117,19 +120,19 @@ for (let fl_cat = 0; fl_cat < cat_file_names.length; fl_cat++) {
     obj_flows_with_row_ids.flows.push(JSON.parse(JSON.stringify(flow)))
 
     var flows_sheets = JSON.stringify(flows_sheets, null, 2);
-    var output_path = path.join(__dirname, "../examples/json/" + file_name + ".json");
+    var output_path = path.join(__dirname, "../parentText/json/" + file_name + ".json");
     fs.writeFile(output_path, flows_sheets, function (err, result) {
         if (err) console.log('error', err);
     });
 
-}
-
+//}
+/*
 obj_flows_with_row_ids = JSON.stringify(obj_flows_with_row_ids , null, 2);
 var output_path = path.join(__dirname, "../examples/input_with_row_ids/" + input_file_name + ".json");
 fs.writeFile(output_path, obj_flows_with_row_ids, function (err, result) {
     if (err) console.log('error', err);
 });
-
+*/
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -231,6 +234,7 @@ function processNode(curr_node, from_row_id) {
 
             // add conditions to the first row corresponding to the node
             var first_row = node_rows.sort((r1, r2) => r1.row_id - r2.row_id)[0];
+            
             addConditions(curr_node, first_row)
 
 
@@ -330,7 +334,7 @@ function createSendMsgRow(curr_node, curr_action, row_counter, from_row) {
         curr_row[file_type] = file_url.replace("@(fields.voiceover_audio_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/voiceover/resourceType/audio/eng/")
             .replace("@(fields.relaxation_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/relaxation/eng/")
             .replace("@(fields.voiceover_video_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/voiceover/resourceType/video/eng/")
-            .replace("@(fields.comic_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/comic/eng/")
+            .replace("@(fields.comic_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/comic/")
             .replace("@(fields.image_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/image/universal/")
             .replace("@(fields.animated_audio_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/animated/resourceType/audio/eng/")
             .replace("@(fields.animated_video_path & \"", "https://idems-media-recorder.web.app/storage/project/PLH/subproject/Rapidpro/deployment/Global/resourceGroup/animated/resourceType/video/eng/")
@@ -629,7 +633,7 @@ function addConditions(curr_node, curr_row) {
                                     curr_row.condition_name.push(null);
 
                                 } else {
-                                    let from_cases = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid))[0];
+                                    let from_cases = from_node.router.cases.filter(cs => (cs.category_uuid == from_cat.uuid));
                                     curr_row.condition.push(from_cases[0].arguments);
                                     curr_row.condition_var.push(from_node.router.operand);
                                     curr_row.condition_type.push(from_cases[0].type);
