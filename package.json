@@ -21,6 +21,7 @@
   "homepage": "https://github.com/IDEMSInternational/json-to-excel-flow#readme",
   "dependencies": {
     "json-2-csv": "^3.11.0",
-    "yargs": "^17.0.1"
+    "yargs": "^17.0.1",
+    "xlsx": "^0.17.1"
   }
 }
