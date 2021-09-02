@@ -1,139 +1,73 @@
-var fs = require('fs');
-var path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-//const input_file_name = "no_switch_nodes";
-const input_file_name = "plh-international-flavour"
+const [
+    input_file_path,
+    mapping_file_path,
+    output_dir
+] = process.argv.slice(2);
+const json_string = fs.readFileSync(input_file_path).toString();
+const obj_flows = JSON.parse(json_string);
 
-//var input_path = path.join(__dirname, "../examples/_input_flows/" + input_file_name + ".json");
-var input_path = path.join(__dirname, "../parentText/_input_flows/"+ input_file_name + ".json");
+const mapping_config = JSON.parse(fs.readFileSync(mapping_file_path));
 
-var json_string = fs.readFileSync(input_path).toString();
-var obj_flows = JSON.parse(json_string);
-
-
-
-var obj_flows_with_row_ids = JSON.parse(json_string);
-obj_flows_with_row_ids.flows = [];
-
-/*  
-var cat_file_names = [];
-
-cat_file_names.push({ flow_cat_name: "PLH - Help", file_name: "help" })
-cat_file_names.push({ flow_cat_name: "PLH - Content - Relax", file_name: "content-relax" });
-cat_file_names.push({ flow_cat_name: "PLH - Content - Extra", file_name: "content-extra" });
-cat_file_names.push({ flow_cat_name: "PLH - Content - Time", file_name: "content-time" });
-cat_file_names.push({ flow_cat_name: "PLH - Content - Positive", file_name: "content-positive" });
-cat_file_names.push({ flow_cat_name: "PLH - Survey", file_name: "survey" });
-cat_file_names.push({ flow_cat_name: "PLH - Activity - Adult", file_name: "activity-adult" });
-cat_file_names.push({ flow_cat_name: "PLH - Activity - Child", file_name: "activity-child" });
-cat_file_names.push({ flow_cat_name: "PLH - Activity - Baby", file_name: "activity-baby" });
-cat_file_names.push({ flow_cat_name: "PLH - Activity - Teen", file_name: "activity-teen" });
-cat_file_names.push({ flow_cat_name: "PLH - Supportive", file_name: "supportive" });
-cat_file_names.push({ flow_cat_name: "PLH - Welcome", file_name: "welcome" });
-
-*/
-//cat_file_names.push({ flow_cat_name: "", file_name: input_file_name });
-
-
-const other_cat_names = ["PLH - Help", "PLH - Activity", "PLH - Content", "PLH - Supportive", "PLH - Survey", "PLH - Welcome"]
-var file_name = "others";
-
-
-
-
-
-//for (let fl_cat = 0; fl_cat < cat_file_names.length; fl_cat++) {
-//    var flow_cat_name = cat_file_names[fl_cat].flow_cat_name;
-    //var file_name = cat_file_names[fl_cat].file_name;
-
-    var flows_sheets = {}
-
-
-    for (fl = 0; fl < obj_flows.flows.length; fl++) {
-
-        flow = obj_flows.flows[fl];
-         
-        /*
-        if (!flow.name.startsWith(flow_cat_name)) {
-            continue
+const files = obj_flows.flows.reduce(
+    (acc, flow) => {
+        const mapping = mapping_config.mappings.find(
+            (m) => flow.name.startsWith(m.flow_cat_name)
+        );
+        const file_name = mapping ? mapping.file_name : mapping_config.default_file_name;
+        if (acc[file_name]) {
+            acc[file_name].push(flow);
+        } else {
+            acc[file_name] = [flow];
         }
-        */
+        return acc;
+    },
+    {}
+);
 
+for (const [file_name, flows] of Object.entries(files)) {
 
-        
-        var is_other_flow = true;
-        other_cat_names.forEach(cat => {
-            if (flow.name.startsWith(cat)){
-                is_other_flow = false;
-            }
-        })
-        if (!is_other_flow){
-            continue
-        }
-        
+    let flows_sheets = {};
 
+    for (var flow of flows) {
+        console.log(flow.name);
 
-        // copy of flow with row ids associated to each node
-        //var flow_with_row_ids = JSON.parse(JSON.stringify(flow));
-        //flow_with_row_ids.nodes = [];
-
-        console.log(flow.name)
-
-        nodes = flow.nodes;
-
+        var nodes = flow.nodes;
         addParents(nodes);
 
-
         var rows_obj = [];
-
         var uuid_processed_nodes = [];
         var node_waiting_list = [];
         var uuid_waiting_list = [];
-
         var curr_node = nodes[0];
         var from_row_id = "start";
         var row_counter = 1;
 
-
         while (uuid_waiting_list.length > 0 || nodes.length > uuid_processed_nodes.length) {
-            console.log("start while loop--------------------------------")
-            processNode(curr_node, from_row_id)
-
+            console.log("start while loop--------------------------------");
+            processNode(curr_node, from_row_id);
 
             if (uuid_waiting_list.length > 0) {
                 curr_node = node_waiting_list[0];
-                console.log("processing first element in waiting list ------------------------------")
-                console.log(curr_node.uuid)
+                console.log("processing first element in waiting list ------------------------------");
+                console.log(curr_node.uuid);
                 curr_node.unprocessed_parents = [];
                 from_row_id = null;
-
             }
-
         }
-        console.log("tot nodes: " + nodes.length + " processed: " + uuid_processed_nodes.length)
-
+        console.log("tot nodes: " + nodes.length + " processed: " + uuid_processed_nodes.length);
 
         flows_sheets[flow.name] = JSON.parse(JSON.stringify(rows_obj));
-
     }
 
-    obj_flows_with_row_ids.flows.push(JSON.parse(JSON.stringify(flow)))
-
-    var flows_sheets = JSON.stringify(flows_sheets, null, 2);
-    var output_path = path.join(__dirname, "../parentText/json/" + file_name + ".json");
-    fs.writeFile(output_path, flows_sheets, function (err, result) {
+    flows_sheets = JSON.stringify(flows_sheets, null, 2);
+    const output_path = path.join(output_dir, `${file_name}.json`);
+    fs.writeFile(output_path, flows_sheets, (err, _) => {
         if (err) console.log('error', err);
     });
-
-//}
-/*
-obj_flows_with_row_ids = JSON.stringify(obj_flows_with_row_ids , null, 2);
-var output_path = path.join(__dirname, "../examples/input_with_row_ids/" + input_file_name + ".json");
-fs.writeFile(output_path, obj_flows_with_row_ids, function (err, result) {
-    if (err) console.log('error', err);
-});
-*/
-
+}
 
 //////////////////////////////////////////////////////////////////////////////
 function addParents(nodes) {

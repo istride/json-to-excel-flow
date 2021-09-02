@@ -1,0 +1,23 @@
+{
+  "version": "13",
+  "site": "https://rapidpro.idems.international",
+  "flows": [
+    {
+      "_ui": {
+        "nodes": {}
+      },
+      "expire_after_minutes": 60,
+      "language": "eng",
+      "name": "PLH - Internal - Empty",
+      "nodes": [],
+      "spec_version": "13.1.0",
+      "type": "messaging",
+      "uuid": "765afa39-7db3-4cf2-9289-5aa0e7331833",
+      "revision": 1
+    }
+  ],
+  "campaigns": [],
+  "triggers": [],
+  "fields": [],
+  "groups": []
+}

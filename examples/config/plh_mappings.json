@@ -1,0 +1,53 @@
+{
+    "default_file_name": "others",
+    "mappings": [
+        {
+            "flow_cat_name": "PLH - Help",
+            "file_name": "help"
+        },
+        {
+            "flow_cat_name": "PLH - Content - Relax",
+            "file_name": "content-relax"
+        },
+        {
+            "flow_cat_name": "PLH - Content - Extra",
+            "file_name": "content-extra"
+        },
+        {
+            "flow_cat_name": "PLH - Content - Time",
+            "file_name": "content-time"
+        },
+        {
+            "flow_cat_name": "PLH - Content - Positive",
+            "file_name": "content-positive"
+        },
+        {
+            "flow_cat_name": "PLH - Survey",
+            "file_name": "survey"
+        },
+        {
+            "flow_cat_name": "PLH - Activity - Adult",
+            "file_name": "activity-adult"
+        },
+        {
+            "flow_cat_name": "PLH - Activity - Child",
+            "file_name": "activity-child"
+        },
+        {
+            "flow_cat_name": "PLH - Activity - Baby",
+            "file_name": "activity-baby"
+        },
+        {
+            "flow_cat_name": "PLH - Activity - Teen",
+            "file_name": "activity-teen"
+        },
+        {
+            "flow_cat_name": "PLH - Supportive",
+            "file_name": "supportive"
+        },
+        {
+            "flow_cat_name": "PLH - Welcome",
+            "file_name": "welcome"
+        }
+    ]
+}
